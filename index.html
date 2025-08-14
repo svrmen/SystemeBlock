@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конфигуратор ГРЩ SystemeBlock</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0c8f8;
+            max-width: 1000px;
+            margin: 0 auto 20px;
+        }
+        
+        .app-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .control-panel {
+            flex: 1;
+            min-width: 400px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            height: fit-content;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .visualization {
+            flex: 2;
+            min-width: 500px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #64b5f6;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .config-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(0, 30, 60, 0.3);
+            border-radius: 10px;
+        }
+        
+        .config-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: #4fc3f7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .config-title i {
+            font-size: 1.4rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            font-size: 0.95rem;
+            color: #bbdefb;
+        }
+        
+        input, select {
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2196f3;
+            background: rgba(33, 150, 243, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #2196f3, #21cbf3);
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(33, 150, 243, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(90deg, #ff9800, #ff5722);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, #f44336, #d32f2f);
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+        }
+        
+        .cabinet-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            justify-content: flex-start;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+        
+        .cabinet-column {
+            background: rgba(0, 30, 60, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid rgba(33, 150, 243, 0.5);
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .column-title {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ff9800;
+            font-weight: bold;
+        }
+        
+        .section {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+        }
+        
+        .incomer, .sectional, .breaker, .avr {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            font-size: 0.9rem;
+        }
+        
+        .incomer:hover, .sectional:hover, .breaker:hover, .avr:hover {
+            transform: scale(1.03);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .incomer {
+            background: linear-gradient(90deg, #2196f3, #3f51b5);
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sectional {
+            background: linear-gradient(90deg, #ff9800, #ff5722);
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avr {
+            background: linear-gradient(90deg, #9c27b0, #673ab7);
+            height: 112px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .breaker {
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+        }
+        
+        .breaker-horizontal {
+            display: block;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .breaker-vertical {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .breaker-vertical-item {
+            flex: 1;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            border-radius: 5px;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .cable-compartment {
+            background: rgba(156, 39, 176, 0.1);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+        }
+        
+        .bus-compartment {
+            background: linear-gradient(90deg, #009688, #00796b);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .specs {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        .specs h3 {
+            margin-bottom: 10px;
+            color: #e91e63;
+            text-align: center;
+        }
+        
+        .specs-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .spec-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .spec-value {
+            color: #64ffda;
+            font-weight: 600;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #90a4ae;
+            font-size: 0.9rem;
+        }
+        
+        .warning {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .breaker-config {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .breaker-config input {
+            flex: 1;
+        }
+        
+        .breaker-config select {
+            width: 120px;
+        }
+        
+        .column-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .column-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .breaker-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .breaker-item {
+            background: rgba(0, 150, 136, 0.2);
+            border: 1px solid #009688;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .delete-breaker-btn {
+            background: none;
+            border: none;
+            color: #ff5252;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .layout-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+        
+        .layout-option input {
+            margin-right: 5px;
+        }
+        
+        .layout-option.active {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196f3;
+        }
+        
+        .module-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: #2c3e50;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-btn.confirm {
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            color: white;
+        }
+        
+        .modal-btn.cancel {
+            background: linear-gradient(90deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .expansion-config {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .expansion-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .expansion-title {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: #bbdefb;
+        }
+        
+        .excel-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .excel-preview h4 {
+            margin-bottom: 10px;
+            color: #64b5f6;
+            text-align: center;
+        }
+        
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        .excel-table th {
+            background: rgba(33, 150, 243, 0.3);
+            padding: 8px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .excel-table td {
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .visualization {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Конфигуратор ГРЩ SystemeBlock</h1>
+            <p class="subtitle">Профессиональный инструмент для проектирования электрических щитов низкого напряжения с гибкой компоновкой колонн</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="control-panel">
+                <h2 class="panel-title">Конфигурация щита</h2>
+                
+                <div class="config-section">
+                    <div class="config-title">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>Общие параметры</span>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Обслуживание:</label>
+                        <div class="layout-option active">
+                            <input type="radio" name="layout" id="wall-layout" checked>
+                            <label for="wall-layout">Одностороннее (глубина 600 мм)</label>
+                        </div>
+                        <div class="layout-option">
+                            <input type="radio" name="layout" id="center-layout">
+                            <label for="center-layout">Двухстороннее (глубина 1000 мм)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="ip-rating">Степень защиты IP:</label>
+                        <select id="ip-rating">
+                            <option value="IP31">IP31</option>
+                            <option value="IP54" selected>IP54</option>
+                            <option value="IP65">IP65</option>
+                        </select>
+                    </div>
+                    
+                    <button id="refresh-btn" class="btn">
+                        <i class="fas fa-sync-alt"></i> Обновить визуализацию
+                    </button>
+                    
+                    <button id="export-excel-btn" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Экспорт в Excel
+                    </button>
+                </div>
+                
+                <div class="config-section">
+                    <div class="config-title">
+                        <i class="fas fa-columns"></i>
+                        <span>Колонны щита</span>
+                    </div>
+                    
+                    <div id="columns-container">
+                        <!-- Колонны будут добавляться здесь -->
+                    </div>
+                    
+                    <button id="add-column-btn" class="btn">
+                        <i class="fas fa-plus"></i> Добавить колонну
+                    </button>
+                </div>
+                
+                <div class="excel-preview">
+                    <h4>Предпросмотр данных для Excel</h4>
+                    <table class="excel-table" id="excel-preview-table">
+                        <thead>
+                            <tr>
+                                <th>Тип колонны</th>
+                                <th>Номинал (А)</th>
+                                <th>Количество</th>
+                                <th>Блок слева</th>
+                                <th>Блок справа</th>
+                                <th>АВР</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Данные будут добавляться здесь -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="visualization">
+                <h2 class="panel-title">Визуализация шкафа</h2>
+                <div class="cabinet-container" id="cabinet-visualization">
+                    <!-- Визуализация колонн будет здесь -->
+                </div>
+                
+                <div class="specs">
+                    <h3>Технические характеристики</h3>
+                    <div class="specs-list">
+                        <div class="spec-item">Общая ширина: <span class="spec-value" id="total-width">0 мм</span></div>
+                        <div class="spec-item">Глубина: <span class="spec-value" id="cabinet-depth">600 мм</span></div>
+                        <div class="spec-item">Высота: <span class="spec-value">2200 мм</span></div>
+                        <div class="spec-item">Степень защиты: <span class="spec-value" id="ip-value">IP54</span></div>
+                        <div class="spec-item">Номинальный ток: <span class="spec-value" id="total-current">0 А</span></div>
+                        <div class="spec-item">Ток КЗ: <span class="spec-value">100 кА</span></div>
+                        <div class="spec-item">Количество колонн: <span class="spec-value" id="column-count">0</span></div>
+                        <div class="spec-item">Секционирование: <span class="spec-value">Форма 4b</span></div>
+                        <div class="spec-item">Стандарт: <span class="spec-value">IEC 61439</span></div>
+                        <div class="spec-item">Кол-во автоматов: <span class="spec-value" id="breaker-count">0</span></div>
+                        <div class="spec-item">Использовано модулей: <span class="spec-value" id="used-modules">0/32</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Конфигуратор основан на каталоге SystemeBlock | Низковольтные комплектные устройства на токи до 6300А</p>
+            <p>Все спецификации соответствуют стандартам ГОСТ МЭК 61439-1 и ГОСТ МЭК 61439-2</p>
+            <p>Экспорт в Excel позволяет генерировать данные для последующего создания чертежей в AutoCAD</p>
+        </div>
+    </div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Подтвердите действие</h3>
+            <p id="modal-message">Превышено максимальное количество модулей (32)! Доступно: 5 модулей. Добавить новую колонну?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn confirm" id="confirm-add">Добавить колонну</button>
+                <button class="modal-btn cancel" id="cancel-add">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Шаблон для колонны -->
+    <template id="column-template">
+        <div class="column-item">
+            <div class="column-header">
+                <h3>Колонна <span class="column-number">1</span></h3>
+                <button class="btn btn-danger delete-column-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="input-group">
+                <label>Тип колонны:</label>
+                <select class="column-type">
+                    <option value="incomer">Вводная</option>
+                    <option value="sectional">Секционная</option>
+                    <option value="outgoing">Отходящая</option>
+                </select>
+            </div>
+            
+            <div class="incomer-config">
+                <div class="input-group">
+                    <label>Количество автоматов:</label>
+                    <select class="incomer-count">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Номинал автомата:</label>
+                    <select class="breaker-size">
+                        <option value="800">800А</option>
+                        <option value="1000">1000А</option>
+                        <option value="1250">1250А</option>
+                        <option value="1600">1600А</option>
+                        <option value="2000">2000А</option>
+                        <option value="2500">2500А</option>
+                        <option value="3200">3200А</option>
+                        <option value="4000">4000А</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="sectional-config" style="display: none;">
+                <div class="input-group">
+                    <label>Номинал автомата:</label>
+                    <select class="breaker-size">
+                        <option value="800">800А</option>
+                        <option value="1000">1000А</option>
+                        <option value="1250">1250А</option>
+                        <option value="1600">1600А</option>
+                        <option value="2000">2000А</option>
+                        <option value="2500">2500А</option>
+                        <option value="3200">3200А</option>
+                        <option value="4000">4000А</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" class="avr-checkbox"> АВР на SystemePLC (9 модулей)
+                    </label>
+                </div>
+            </div>
+            
+            <div class="expansion-config">
+                <div class="expansion-group">
+                    <div class="expansion-title">Блок слева</div>
+                    <select class="expansion-left">
+                        <option value="none">Нет</option>
+                        <option value="200">200 мм</option>
+                        <option value="400">400 мм</option>
+                    </select>
+                </div>
+                
+                <div class="expansion-group">
+                    <div class="expansion-title">Блок справа</div>
+                    <select class="expansion-right">
+                        <option value="none">Нет</option>
+                        <option value="200">200 мм</option>
+                        <option value="400">400 мм</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="outgoing-config" style="display: none;">
+                <div class="input-group">
+                    <label>Исполнение автоматов:</label>
+                    <select class="breaker-layout">
+                        <option value="horizontal">Горизонтальное</option>
+                        <option value="vertical">Вертикальное</option>
+                        <option value="mixed">Комбинированное</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label>Конфигурация автоматов:</label>
+                    <div class="breaker-config">
+                        <select class="breaker-type">
+                            <option value="100A-250A">100А-250А (3 модуля)</option>
+                            <option value="400A-630A">400А-630А (4 модуля)</option>
+                        </select>
+                        <input type="number" class="breaker-count" min="1" max="32" value="1">
+                    </div>
+                </div>
+                
+                <div class="breaker-container">
+                    <!-- Автоматы будут добавляться здесь -->
+                </div>
+                
+                <button class="btn btn-secondary add-breaker-btn">
+                    <i class="fas fa-plus"></i> Добавить автомат
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const columnsContainer = document.getElementById('columns-container');
+            const cabinetVisualization = document.getElementById('cabinet-visualization');
+            const addColumnBtn = document.getElementById('add-column-btn');
+            const columnTemplate = document.getElementById('column-template');
+            const modal = document.getElementById('confirmation-modal');
+            const modalMessage = document.getElementById('modal-message');
+            const confirmAddBtn = document.getElementById('confirm-add');
+            const cancelAddBtn = document.getElementById('cancel-add');
+            const refreshBtn = document.getElementById('refresh-btn');
+            const ipRatingSelect = document.getElementById('ip-rating');
+            const exportExcelBtn = document.getElementById('export-excel-btn');
+            const excelPreviewTable = document.getElementById('excel-preview-table').querySelector('tbody');
+            
+            let columnCounter = 1;
+            let groupCounter = 1;
+            let currentModalData = {};
+            
+            // Обновление визуализации по кнопке
+            refreshBtn.addEventListener('click', updateVisualization);
+            
+            // Обновление степени защиты IP
+            ipRatingSelect.addEventListener('change', function() {
+                document.getElementById('ip-value').textContent = this.value;
+            });
+            
+            // Общие настройки
+            const layoutOptions = document.querySelectorAll('.layout-option');
+            layoutOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    layoutOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const depth = this.querySelector('input').id === 'wall-layout' ? '600 мм' : '1000 мм';
+                    document.getElementById('cabinet-depth').textContent = depth;
+                    updateVisualization();
+                });
+            });
+            
+            // Закрытие модального окна
+            cancelAddBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Добавление колонны
+            addColumnBtn.addEventListener('click', function() {
+                const columnClone = document.importNode(columnTemplate.content, true);
+                const columnNumber = columnCounter++;
+                columnClone.querySelector('.column-number').textContent = columnNumber;
+                
+                // Обработчики событий для колонны
+                const deleteBtn = columnClone.querySelector('.delete-column-btn');
+                const columnTypeSelect = columnClone.querySelector('.column-type');
+                const addBreakerBtn = columnClone.querySelector('.add-breaker-btn');
+                
+                deleteBtn.addEventListener('click', function() {
+                    this.closest('.column-item').remove();
+                    renumberColumns();
+                    updateVisualization();
+                    updateExcelPreview();
+                });
+                
+                columnTypeSelect.addEventListener('change', function() {
+                    const columnItem = this.closest('.column-item');
+                    const incomerConfig = columnItem.querySelector('.incomer-config');
+                    const sectionalConfig = columnItem.querySelector('.sectional-config');
+                    const outgoingConfig = columnItem.querySelector('.outgoing-config');
+                    const expansionConfig = columnItem.querySelector('.expansion-config');
+                    
+                    incomerConfig.style.display = 'none';
+                    sectionalConfig.style.display = 'none';
+                    outgoingConfig.style.display = 'none';
+                    
+                    // Сброс блоков расширения при смене типа
+                    const expansionLeft = columnItem.querySelector('.expansion-left');
+                    const expansionRight = columnItem.querySelector('.expansion-right');
+                    expansionLeft.value = 'none';
+                    expansionRight.value = 'none';
+                    
+                    if (this.value === 'incomer') {
+                        incomerConfig.style.display = 'block';
+                        expansionConfig.style.display = 'grid';
+                    } else if (this.value === 'sectional') {
+                        sectionalConfig.style.display = 'block';
+                        expansionConfig.style.display = 'grid';
+                    } else if (this.value === 'outgoing') {
+                        outgoingConfig.style.display = 'block';
+                        expansionConfig.style.display = 'none';
+                        // Назначение группы для отходящих колонн
+                        if (!columnItem.dataset.outgoingGroup) {
+                            columnItem.dataset.outgoingGroup = groupCounter++;
+                        }
+                    }
+                    
+                    updateVisualization();
+                    updateExcelPreview();
+                });
+                
+                // Обработчик для блоков расширения
+                const expansionSelects = columnClone.querySelectorAll('.expansion-left, .expansion-right');
+                expansionSelects.forEach(select => {
+                    select.addEventListener('change', function() {
+                        const columnItem = this.closest('.column-item');
+                        const leftSelect = columnItem.querySelector('.expansion-left');
+                        const rightSelect = columnItem.querySelector('.expansion-right');
+                        
+                        // Проверка ограничений для 400мм блоков
+                        if (leftSelect.value === '400' && rightSelect.value === '400') {
+                            if (this === leftSelect) {
+                                rightSelect.value = 'none';
+                            } else {
+                                leftSelect.value = 'none';
+                            }
+                        }
+                        
+                        updateVisualization();
+                        updateExcelPreview();
+                    });
+                });
+                
+                // Обработчик для АВР в секционной колонне
+                const avrCheckbox = columnClone.querySelector('.avr-checkbox');
+                if (avrCheckbox) {
+                    avrCheckbox.addEventListener('change', function() {
+                        updateVisualization();
+                        updateExcelPreview();
+                    });
+                }
+                
+                // Обработчик для количества автоматов во вводной
+                const incomerCountSelect = columnClone.querySelector('.incomer-count');
+                if (incomerCountSelect) {
+                    incomerCountSelect.addEventListener('change', function() {
+                        updateVisualization();
+                        updateExcelPreview();
+                    });
+                }
+                
+                // Обработчик для номинала автомата в секционной колонне
+                const sectionalBreakerSize = columnClone.querySelector('.sectional-config .breaker-size');
+                if (sectionalBreakerSize) {
+                    sectionalBreakerSize.addEventListener('change', function() {
+                        updateVisualization();
+                        updateExcelPreview();
+                    });
+                }
+                
+                // Обратчик для номинала автомата во вводной колонне
+                const incomerBreakerSize = columnClone.querySelector('.incomer-config .breaker-size');
+                if (incomerBreakerSize) {
+                    incomerBreakerSize.addEventListener('change', function() {
+                        updateVisualization();
+                        updateExcelPreview();
+                    });
+                }
+                
+                addBreakerBtn?.addEventListener('click', function() {
+                    const columnItem = this.closest('.column-item');
+                    const breakerType = columnItem.querySelector('.breaker-type').value;
+                    const breakerCount = parseInt(columnItem.querySelector('.breaker-count').value);
+                    const groupId = columnItem.dataset.outgoingGroup;
+                    
+                    // Проверка на превышение модулей
+                    const moduleSize = (breakerType === '100A-250A') ? 3 : 4;
+                    const requiredModules = moduleSize * breakerCount;
+                    
+                    // Проверка свободного места в текущей колонне
+                    let currentModules = 0;
+                    columnItem.querySelectorAll('.breaker-item').forEach(item => {
+                        const type = item.dataset.type;
+                        currentModules += (type === '100A-250A') ? 3 : 4;
+                    });
+                    
+                    const freeModules = 32 - currentModules;
+                    
+                    if (requiredModules > freeModules) {
+                        // Сохраняем данные для использования после подтверждения
+                        currentModalData = {
+                            groupId: groupId,
+                            breakerType: breakerType,
+                            breakerCount: breakerCount
+                        };
+                        
+                        // Показываем модальное окно для подтверждения
+                        modalMessage.textContent = `Превышено максимальное количество модулей (32)! Доступно: ${freeModules} модулей. Добавить новую колонну?`;
+                        modal.style.display = 'flex';
+                    } else {
+                        // Добавляем автоматы в текущую колонну
+                        for (let i = 0; i < breakerCount; i++) {
+                            addBreakerToColumn(columnItem, breakerType);
+                        }
+                        updateVisualization();
+                        updateExcelPreview();
+                    }
+                });
+                
+                columnsContainer.appendChild(columnClone);
+                updateVisualization();
+                updateExcelPreview();
+            });
+            
+            // Обработчик подтверждения добавления колонны
+            confirmAddBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                const { groupId, breakerType, breakerCount } = currentModalData;
+                addBreakersWithDistribution(groupId, breakerType, breakerCount);
+                updateExcelPreview();
+            });
+            
+            // Добавление автомата в колонну
+            function addBreakerToColumn(column, type) {
+                const breakerItem = document.createElement('div');
+                breakerItem.className = 'breaker-item';
+                breakerItem.innerHTML = `
+                    <span>${type}</span>
+                    <button class="delete-breaker-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                breakerItem.dataset.type = type;
+                
+                breakerItem.querySelector('.delete-breaker-btn').addEventListener('click', function() {
+                    breakerItem.remove();
+                    updateVisualization();
+                    updateExcelPreview();
+                });
+                
+                column.querySelector('.breaker-container').appendChild(breakerItem);
+            }
+            
+            // Распределение автоматов по колоннам
+            function addBreakersWithDistribution(groupId, breakerType, totalBreakers) {
+                // Собираем все колонны группы
+                let groupColumns = [...document.querySelectorAll(`.column-item[data-outgoing-group="${groupId}"]`)];
+                
+                // Создаем новые колонны при необходимости
+                const moduleSize = (breakerType === '100A-250A') ? 3 : 4;
+                const totalRequiredModules = moduleSize * totalBreakers;
+                const totalAvailableModules = groupColumns.length * 32;
+                
+                // Расчет необходимых колонн
+                const neededColumns = Math.ceil(totalRequiredModules / 32);
+                const columnsToAdd = neededColumns - groupColumns.length;
+                
+                // Добавляем новые колонны
+                for (let i = 0; i < columnsToAdd; i++) {
+                    const newColumn = addOutgoingColumn(groupId);
+                    columnsContainer.appendChild(newColumn);
+                    groupColumns = [...document.querySelectorAll(`.column-item[data-outgoing-group="${groupId}"]`)];
+                }
+                
+                // Распределение автоматов
+                const breakersPerColumn = Math.ceil(totalBreakers / groupColumns.length);
+                let remainingBreakers = totalBreakers;
+                
+                for (const column of groupColumns) {
+                    if (remainingBreakers <= 0) break;
+                    
+                    // Проверяем свободное место в колонне
+                    let usedModules = 0;
+                    column.querySelectorAll('.breaker-item').forEach(item => {
+                        const type = item.dataset.type;
+                        usedModules += (type === '100A-250A') ? 3 : 4;
+                    });
+                    
+                    const freeSpace = 32 - usedModules;
+                    const maxCanAdd = Math.floor(freeSpace / moduleSize);
+                    
+                    // Сколько автоматов можно добавить в эту колонну
+                    const toAdd = Math.min(breakersPerColumn, remainingBreakers, maxCanAdd);
+                    
+                    if (toAdd > 0) {
+                        for (let i = 0; i < toAdd; i++) {
+                            addBreakerToColumn(column, breakerType);
+                        }
+                        remainingBreakers -= toAdd;
+                    }
+                }
+                
+                // Если остались нераспределенные автоматы (из-за ограничений модулей)
+                if (remainingBreakers > 0) {
+                    // Добавляем еще одну колонну
+                    const newColumn = addOutgoingColumn(groupId);
+                    columnsContainer.appendChild(newColumn);
+                    groupColumns = [...document.querySelectorAll(`.column-item[data-outgoing-group="${groupId}"]`)];
+                    
+                    // Добавляем оставшиеся автоматы в новую колонну
+                    for (let i = 0; i < remainingBreakers; i++) {
+                        addBreakerToColumn(newColumn.querySelector('.column-item'), breakerType);
+                    }
+                }
+                
+                updateVisualization();
+                updateExcelPreview();
+            }
+            
+            // Добавление отходящей колонны
+            function addOutgoingColumn(groupId) {
+                const columnClone = document.importNode(columnTemplate.content, true);
+                const columnNumber = columnCounter++;
+                columnClone.querySelector('.column-number').textContent = columnNumber;
+                
+                // Устанавливаем тип колонны
+                const columnItem = columnClone.querySelector('.column-item');
+                columnItem.querySelector('.column-type').value = 'outgoing';
+                columnItem.querySelector('.incomer-config').style.display = 'none';
+                columnItem.querySelector('.sectional-config').style.display = 'none';
+                columnItem.querySelector('.outgoing-config').style.display = 'block';
+                columnItem.querySelector('.expansion-config').style.display = 'none';
+                columnItem.dataset.outgoingGroup = groupId;
+                
+                // Обработчики событий
+                const deleteBtn = columnItem.querySelector('.delete-column-btn');
+                const addBreakerBtn = columnItem.querySelector('.add-breaker-btn');
+                
+                deleteBtn.addEventListener('click', function() {
+                    columnItem.remove();
+                    renumberColumns();
+                    updateVisualization();
+                    updateExcelPreview();
+                });
+                
+                addBreakerBtn.addEventListener('click', function() {
+                    const breakerType = columnItem.querySelector('.breaker-type').value;
+                    const breakerCount = parseInt(columnItem.querySelector('.breaker-count').value);
+                    const groupId = columnItem.dataset.outgoingGroup;
+                    
+                    // Проверка на превышение модулей
+                    const moduleSize = (breakerType === '100A-250A') ? 3 : 4;
+                    const requiredModules = moduleSize * breakerCount;
+                    
+                    // Проверка свободного места в текущей колонне
+                    let currentModules = 0;
+                    columnItem.querySelectorAll('.breaker-item').forEach(item => {
+                        const type = item.dataset.type;
+                        currentModules += (type === '100A-250A') ? 3 : 4;
+                    });
+                    
+                    const freeModules = 32 - currentModules;
+                    
+                    if (requiredModules > freeModules) {
+                        // Сохраняем данные для использования после подтверждения
+                        currentModalData = {
+                            groupId: groupId,
+                            breakerType: breakerType,
+                            breakerCount: breakerCount
+                        };
+                        
+                        // Показываем модальное окно для подтверждения
+                        modalMessage.textContent = `Превышено максимальное количество модулей (32)! Доступно: ${freeModules} модулей. Добавить новую колонну?`;
+                        modal.style.display = 'flex';
+                    } else {
+                        // Добавляем автоматы в текущую колонну
+                        for (let i = 0; i < breakerCount; i++) {
+                            addBreakerToColumn(columnItem, breakerType);
+                        }
+                        updateVisualization();
+                        updateExcelPreview();
+                    }
+                });
+                
+                return columnClone;
+            }
+            
+            // Перенумерация колонн после удаления
+            function renumberColumns() {
+                const columnItems = document.querySelectorAll('#columns-container .column-item');
+                columnItems.forEach((item, index) => {
+                    const columnNumberSpan = item.querySelector('.column-number');
+                    if (columnNumberSpan) {
+                        columnNumberSpan.textContent = index + 1;
+                    }
+                });
+            }
+            
+            // Обновление визуализации
+            function updateVisualization() {
+                cabinetVisualization.innerHTML = '';
+                const columns = document.querySelectorAll('.column-item');
+                let totalWidthMM = 0;
+                let maxCurrent = 0;
+                let breakerCount = 0;
+                let totalModules = 0;
+                const layout = document.querySelector('.layout-option.active input').id;
+                
+                columns.forEach((column, index) => {
+                    const columnType = column.querySelector('.column-type').value;
+                    
+                    if (columnType === 'incomer' || columnType === 'sectional') {
+                        const isIncomer = columnType === 'incomer';
+                        
+                        // Находим активный блок конфигурации
+                        const configBlock = isIncomer 
+                            ? column.querySelector('.incomer-config') 
+                            : column.querySelector('.sectional-config');
+                            
+                        // Получаем значения из активного блока
+                        const breakerSizeSelect = configBlock.querySelector('.breaker-size');
+                        const breakerSizeValue = breakerSizeSelect ? breakerSizeSelect.value : "800";
+                        const incomerCount = isIncomer 
+                            ? parseInt(column.querySelector('.incomer-count').value) 
+                            : 1;
+                            
+                        const expansionLeft = column.querySelector('.expansion-left').value;
+                        const expansionRight = column.querySelector('.expansion-right').value;
+                        const hasAVR = !isIncomer && column.querySelector('.avr-checkbox')?.checked;
+                        
+                        // Расчет ширины
+                        if (expansionLeft !== 'none') totalWidthMM += parseInt(expansionLeft);
+                        totalWidthMM += 700; // Основная колонна
+                        if (expansionRight !== 'none') totalWidthMM += parseInt(expansionRight);
+                        
+                        // Расчет модулей
+                        totalModules += incomerCount * 12; // 12 модулей на автомат
+                        if (hasAVR) totalModules += 9; // 9 модулей для АВР
+                        
+                        // Определение максимального тока
+                        const breakerCurrent = parseInt(breakerSizeValue);
+                        if (breakerCurrent > maxCurrent) {
+                            maxCurrent = breakerCurrent;
+                        }
+                        
+                        // Визуализация
+                        // Левый блок расширения
+                        if (expansionLeft !== 'none') {
+                            const widthPx = parseInt(expansionLeft) / 700 * 200; // Пропорционально
+                            const expansionColumn = document.createElement('div');
+                            expansionColumn.className = 'cabinet-column';
+                            expansionColumn.style.width = widthPx + 'px';
+                            expansionColumn.style.background = 'rgba(255, 193, 7, 0.3)';
+                            expansionColumn.innerHTML = `<div class="column-title">${expansionLeft} мм</div>`;
+                            cabinetVisualization.appendChild(expansionColumn);
+                        }
+                        
+                        // Основная колонна
+                        const columnEl = createColumnElement(200, columnType);
+                        const section = document.createElement('div');
+                        section.className = 'section';
+                        
+                        // Для секционной колонны: сначала АВР, затем автомат
+                        if (columnType === 'sectional' && hasAVR) {
+                            const avrEl = document.createElement('div');
+                            avrEl.className = 'avr';
+                            avrEl.textContent = 'АВР на SystemePLC';
+                            section.appendChild(avrEl);
+                        }
+                        
+                        // Автоматы
+                        for (let i = 0; i < incomerCount; i++) {
+                            const breakerEl = document.createElement('div');
+                            breakerEl.className = isIncomer ? 'incomer' : 'sectional';
+                            breakerEl.textContent = `${isIncomer ? 'Ввод' : 'Секционный'} (ACB, ${breakerSizeValue}А)`;
+                            section.appendChild(breakerEl);
+                        }
+                        
+                        // Для вводной колонны: АВР после автоматов
+                        if (columnType === 'incomer' && hasAVR) {
+                            const avrEl = document.createElement('div');
+                            avrEl.className = 'avr';
+                            avrEl.textContent = 'АВР на SystemePLC';
+                            section.appendChild(avrEl);
+                        }
+                        
+                        columnEl.appendChild(section);
+                        cabinetVisualization.appendChild(columnEl);
+                        
+                        // Правый блок расширения
+                        if (expansionRight !== 'none') {
+                            const widthPx = parseInt(expansionRight) / 700 * 200; // Пропорционально
+                            const expansionColumn = document.createElement('div');
+                            expansionColumn.className = 'cabinet-column';
+                            expansionColumn.style.width = widthPx + 'px';
+                            expansionColumn.style.background = 'rgba(255, 193, 7, 0.3)';
+                            expansionColumn.innerHTML = `<div class="column-title">${expansionRight} мм</div>`;
+                            cabinetVisualization.appendChild(expansionColumn);
+                        }
+                        
+                        // Индикатор модулей
+                        const moduleIndicator = document.createElement('div');
+                        moduleIndicator.className = 'module-indicator';
+                        moduleIndicator.textContent = `Модули: ${incomerCount * 12 + (hasAVR ? 9 : 0)}/32`;
+                        section.appendChild(moduleIndicator);
+                    } 
+                    else if (columnType === 'outgoing') {
+                        // Шинный отсек (слева) - 200 мм
+                        totalWidthMM += 200;
+                        const busColumn = document.createElement('div');
+                        busColumn.className = 'cabinet-column';
+                        busColumn.style.width = '57px';
+                        busColumn.style.background = 'rgba(0, 150, 136, 0.3)';
+                        busColumn.innerHTML = `<div class="bus-compartment"></div>`;
+                        cabinetVisualization.appendChild(busColumn);
+                        
+                        // Основная колонна (отходящая) - 700 мм
+                        totalWidthMM += 700;
+                        const columnEl = createColumnElement(200, columnType);
+                        
+                        // Секция с автоматами
+                        const section = createBreakerSection(column);
+                        columnEl.appendChild(section);
+                        cabinetVisualization.appendChild(columnEl);
+                        
+                        // Кабельный отсек (справа) - 400 мм (только у стены)
+                        if (layout === 'wall-layout') {
+                            totalWidthMM += 400;
+                            const cableColumn = document.createElement('div');
+                            cableColumn.className = 'cabinet-column';
+                            cableColumn.style.width = '114px';
+                            cableColumn.style.background = 'rgba(156, 39, 176, 0.1)';
+                            cableColumn.innerHTML = `<div class="cable-compartment"></div>`;
+                            cabinetVisualization.appendChild(cableColumn);
+                        }
+                        
+                        // Подсчет автоматов и модулей
+                        const breakerItems = column.querySelectorAll('.breaker-item');
+                        breakerCount += breakerItems.length;
+                        
+                        breakerItems.forEach(item => {
+                            const type = item.dataset.type;
+                            totalModules += (type === '100A-250A') ? 3 : 4;
+                        });
+                    }
+                });
+                
+                // Обновляем технические характеристики
+                document.getElementById('total-width').textContent = totalWidthMM + ' мм';
+                document.getElementById('total-current').textContent = maxCurrent + ' А';
+                document.getElementById('column-count').textContent = columns.length;
+                document.getElementById('breaker-count').textContent = breakerCount;
+                document.getElementById('used-modules').textContent = `${totalModules}/32`;
+            }
+            
+            // Создание элемента колонны
+            function createColumnElement(widthPx, type) {
+                const columnEl = document.createElement('div');
+                columnEl.className = 'cabinet-column';
+                columnEl.style.width = widthPx + 'px';
+                
+                // Заголовок колонны с типом
+                const columnTitle = document.createElement('div');
+                columnTitle.className = 'column-title';
+                
+                if (type === 'incomer') {
+                    columnTitle.textContent = 'Вводная';
+                    columnEl.style.background = 'rgba(33, 150, 243, 0.3)';
+                } 
+                else if (type === 'sectional') {
+                    columnTitle.textContent = 'Секционная';
+                    columnEl.style.background = 'rgba(255, 152, 0, 0.3)';
+                }
+                else if (type === 'outgoing') {
+                    columnTitle.textContent = 'Отходящая';
+                    columnEl.style.background = 'rgba(76, 175, 80, 0.3)';
+                }
+                
+                columnEl.appendChild(columnTitle);
+                
+                return columnEl;
+            }
+            
+            // Создание секции с автоматами для отходящей колонны
+            function createBreakerSection(column) {
+                const section = document.createElement('div');
+                section.className = 'section';
+                
+                const breakerLayout = column.querySelector('.breaker-layout').value;
+                const breakerItems = column.querySelectorAll('.breaker-item');
+                let moduleCount = 0;
+                
+                // Подсчет модулей
+                breakerItems.forEach(item => {
+                    const type = item.dataset.type;
+                    moduleCount += (type === '100A-250A') ? 3 : 4;
+                });
+                
+                // Индикатор модулей
+                const moduleIndicator = document.createElement('div');
+                moduleIndicator.className = 'module-indicator';
+                moduleIndicator.textContent = `Модули: ${moduleCount}/32`;
+                section.appendChild(moduleIndicator);
+                
+                if (breakerLayout === 'horizontal') {
+                    breakerItems.forEach(item => {
+                        const type = item.dataset.type;
+                        const height = (type === '100A-250A') ? '37.5px' : '50px'; // 3 или 4 модуля
+                        
+                        const breakerEl = document.createElement('div');
+                        breakerEl.className = 'breaker breaker-horizontal';
+                        breakerEl.style.height = height;
+                        breakerEl.textContent = type; // Используем сохраненный тип
+                        section.appendChild(breakerEl);
+                    });
+                } 
+                else if (breakerLayout === 'vertical') {
+                    const rows = [];
+                    let currentRow = [];
+                    
+                    // Разбиваем на ряды по 4 автомата
+                    breakerItems.forEach((item, index) => {
+                        currentRow.push(item);
+                        if (currentRow.length === 4 || index === breakerItems.length - 1) {
+                            rows.push([...currentRow]);
+                            currentRow = [];
+                        }
+                    });
+                    
+                    // Создаем ряды
+                    rows.forEach(row => {
+                        const rowContainer = document.createElement('div');
+                        rowContainer.className = 'breaker-vertical-row';
+                        rowContainer.style.display = 'flex';
+                        rowContainer.style.gap = '5px';
+                        rowContainer.style.marginBottom = '5px';
+                        
+                        // Находим максимальную высоту в ряду
+                        let maxHeight = 0;
+                        row.forEach(item => {
+                            const type = item.dataset.type;
+                            const height = (type === '100A-250A') ? 3 : 4;
+                            if (height > maxHeight) maxHeight = height;
+                        });
+                        
+                        row.forEach(item => {
+                            const type = item.dataset.type;
+                            const height = (type === '100A-250A') ? 3 : 4;
+                            const heightPx = maxHeight * 12.5; // 12.5px за модуль
+                            
+                            const breakerEl = document.createElement('div');
+                            breakerEl.className = 'breaker-vertical-item';
+                            breakerEl.style.height = `${heightPx}px`;
+                            breakerEl.textContent = type; // Используем сохраненный тип
+                            rowContainer.appendChild(breakerEl);
+                        });
+                        
+                        section.appendChild(rowContainer);
+                    });
+                }
+                else { // Комбинированное
+                    // Первые два автомата горизонтально
+                    for (let i = 0; i < Math.min(2, breakerItems.length); i++) {
+                        const item = breakerItems[i];
+                        const type = item.dataset.type;
+                        const height = (type === '100A-250A') ? '37.5px' : '50px';
+                        
+                        const breakerEl = document.createElement('div');
+                        breakerEl.className = 'breaker breaker-horizontal';
+                        breakerEl.style.height = height;
+                        breakerEl.textContent = type; // Используем сохраненный тип
+                        section.appendChild(breakerEl);
+                    }
+                    
+                    // Оставшиеся автоматы вертикально
+                    if (breakerItems.length > 2) {
+                        const verticalItems = Array.from(breakerItems).slice(2);
+                        const rows = [];
+                        let currentRow = [];
+                        
+                        verticalItems.forEach((item, index) => {
+                            currentRow.push(item);
+                            if (currentRow.length === 4 || index === verticalItems.length - 1) {
+                                rows.push([...currentRow]);
+                                currentRow = [];
+                            }
+                        });
+                        
+                        rows.forEach(row => {
+                            const rowContainer = document.createElement('div');
+                            rowContainer.className = 'breaker-vertical-row';
+                            rowContainer.style.display = 'flex';
+                            rowContainer.style.gap = '5px';
+                            rowContainer.style.marginBottom = '5px';
+                            
+                            let maxHeight = 0;
+                            row.forEach(item => {
+                                const type = item.dataset.type;
+                                const height = (type === '100A-250A') ? 3 : 4;
+                                if (height > maxHeight) maxHeight = height;
+                            });
+                            
+                            row.forEach(item => {
+                                const type = item.dataset.type;
+                                const height = (type === '100A-250A') ? 3 : 4;
+                                const heightPx = maxHeight * 12.5;
+                                
+                                const breakerEl = document.createElement('div');
+                                breakerEl.className = 'breaker-vertical-item';
+                                breakerEl.style.height = `${heightPx}px`;
+                                breakerEl.textContent = type; // Используем сохраненный тип
+                                rowContainer.appendChild(breakerEl);
+                            });
+                            
+                            section.appendChild(rowContainer);
+                        });
+                    }
+                }
+                
+                return section;
+            }
+            
+            // Обновление предпросмотра Excel
+            function updateExcelPreview() {
+                excelPreviewTable.innerHTML = '';
+                
+                const columns = document.querySelectorAll('.column-item');
+                columns.forEach(column => {
+                    const columnType = column.querySelector('.column-type').value;
+                    let rowData = {
+                        type: columnType,
+                        size: '',
+                        count: '',
+                        left: '',
+                        right: '',
+                        avr: ''
+                    };
+                    
+                    if (columnType === 'incomer' || columnType === 'sectional') {
+                        const configBlock = columnType === 'incomer' 
+                            ? column.querySelector('.incomer-config') 
+                            : column.querySelector('.sectional-config');
+                            
+                        rowData.size = configBlock.querySelector('.breaker-size').value + 'А';
+                        rowData.count = columnType === 'incomer' 
+                            ? column.querySelector('.incomer-count').value 
+                            : '1';
+                        rowData.left = column.querySelector('.expansion-left').value;
+                        rowData.right = column.querySelector('.expansion-right').value;
+                        rowData.avr = columnType === 'sectional' 
+                            ? (column.querySelector('.avr-checkbox').checked ? 'Да' : 'Нет') 
+                            : '';
+                    } 
+                    else if (columnType === 'outgoing') {
+                        const breakerItems = column.querySelectorAll('.breaker-item');
+                        rowData.size = `${breakerItems.length} автоматов`;
+                    }
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${rowData.type}</td>
+                        <td>${rowData.size}</td>
+                        <td>${rowData.count}</td>
+                        <td>${rowData.left}</td>
+                        <td>${rowData.right}</td>
+                        <td>${rowData.avr}</td>
+                    `;
+                    excelPreviewTable.appendChild(row);
+                });
+            }
+            
+            // Экспорт в Excel
+            exportExcelBtn.addEventListener('click', function() {
+                // Создаем книгу
+                const wb = XLSX.utils.book_new();
+                
+                // Собираем данные
+                const columns = document.querySelectorAll('.column-item');
+                const data = [];
+                
+                // Заголовки
+                data.push(['Тип колонны', 'Номинал (А)', 'Количество', 'Блок слева', 'Блок справа', 'АВР']);
+                
+                // Данные колонн
+                columns.forEach(column => {
+                    const columnType = column.querySelector('.column-type').value;
+                    const row = [];
+                    
+                    row.push(columnType);
+                    
+                    if (columnType === 'incomer' || columnType === 'sectional') {
+                        const configBlock = columnType === 'incomer' 
+                            ? column.querySelector('.incomer-config') 
+                            : column.querySelector('.sectional-config');
+                            
+                        row.push(configBlock.querySelector('.breaker-size').value);
+                        row.push(columnType === 'incomer' 
+                            ? column.querySelector('.incomer-count').value 
+                            : '1');
+                        row.push(column.querySelector('.expansion-left').value);
+                        row.push(column.querySelector('.expansion-right').value);
+                        row.push(columnType === 'sectional' 
+                            ? (column.querySelector('.avr-checkbox').checked ? 'Да' : 'Нет') 
+                            : '');
+                    } 
+                    else if (columnType === 'outgoing') {
+                        const breakerItems = column.querySelectorAll('.breaker-item');
+                        row.push(`${breakerItems.length} автоматов`);
+                        row.push('');
+                        row.push('');
+                        row.push('');
+                        row.push('');
+                    }
+                    
+                    data.push(row);
+                });
+                
+                // Добавляем общие параметры
+                data.push([]);
+                data.push(['Общие параметры', '', '', '', '', '']);
+                data.push(['Общая ширина', document.getElementById('total-width').textContent]);
+                data.push(['Глубина', document.getElementById('cabinet-depth').textContent]);
+                data.push(['Номинальный ток', document.getElementById('total-current').textContent]);
+                data.push(['Степень защиты', document.getElementById('ip-value').textContent]);
+                data.push(['Количество колонн', document.getElementById('column-count').textContent]);
+                data.push(['Количество автоматов', document.getElementById('breaker-count').textContent]);
+                data.push(['Использовано модулей', document.getElementById('used-modules').textContent]);
+                
+                // Создаем лист
+                const ws = XLSX.utils.aoa_to_sheet(data);
+                
+                // Добавляем лист в книгу
+                XLSX.utils.book_append_sheet(wb, ws, "Конфигурация ГРЩ");
+                
+                // Сохраняем файл
+                XLSX.writeFile(wb, "ГРЩ_SystemeBlock.xlsx");
+            });
+            
+            // Инициализация предпросмотра
+            updateExcelPreview();
+        });
+    </script>
+</body>
+</html>
