@@ -176,7 +176,7 @@
         
         .cabinet-container {
             display: flex;
-            gap: 5px;
+            gap: 2px;
             margin-bottom: 20px;
             justify-content: flex-start;
             overflow-x: auto;
@@ -185,47 +185,102 @@
         
         .cabinet-column {
             background: rgba(0, 30, 60, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-            border: 2px solid rgba(33, 150, 243, 0.5);
+            border-radius: 5px;
+            padding: 5px;
+            border: 1px solid rgba(33, 150, 243, 0.5);
             min-height: 600px;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
             position: relative;
+            height: 460px;
         }
         
         .column-title {
             text-align: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             color: #ff9800;
             font-weight: bold;
+            font-size: 0.8rem;
         }
         
-        .section {
+        .column-section {
             flex-grow: 1;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: 3px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 2px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             overflow-y: auto;
+            position: relative;
+        }
+        
+        .column-zone {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 0.6rem;
+            padding: 2px;
+            border-radius: 2px;
+            margin-bottom: 2px;
+        }
+        
+        .top-plate {
+            height: 20px;
+            background: rgba(100, 100, 100, 0.3);
+            padding: 2px;
+        }
+        
+        .bus-zone {
+            height: 40px;
+            background: rgba(0, 150, 136, 0.3);
+            padding: 2px;
+        }
+        
+        .main-zone {
+            height: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+            padding: 2px;
+        }
+        
+        .cable-zone {
+            height: 80px;
+            background: rgba(156, 39, 176, 0.1);
+            padding: 2px;
+        }
+        
+        .bottom-plate {
+            height: 20px;
+            background: rgba(100, 100, 100, 0.3);
+            padding: 2px;
+        }
+        
+        .base-plate {
+            height: 20px;
+            background: rgba(150, 75, 0, 0.3);
+            padding: 2px;
         }
         
         .incomer, .sectional, .breaker, .avr {
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 3px;
+            padding: 3px;
             text-align: center;
             font-weight: 500;
             transition: all 0.3s ease;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            font-size: 0.9rem;
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .incomer:hover, .sectional:hover, .breaker:hover, .avr:hover {
@@ -235,71 +290,22 @@
         
         .incomer {
             background: linear-gradient(90deg, #2196f3, #3f51b5);
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 70px;
         }
         
         .sectional {
             background: linear-gradient(90deg, #ff9800, #ff5722);
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 70px;
         }
         
         .avr {
             background: linear-gradient(90deg, #9c27b0, #673ab7);
-            height: 112px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 50px;
         }
         
         .breaker {
             background: linear-gradient(90deg, #4caf50, #2e7d32);
-        }
-        
-        .breaker-horizontal {
-            display: block;
-            width: 100%;
-            margin-bottom: 5px;
-        }
-        
-        .breaker-vertical {
-            display: flex;
-            justify-content: space-between;
-            gap: 5px;
-            margin-bottom: 5px;
-        }
-        
-        .breaker-vertical-item {
-            flex: 1;
-            background: linear-gradient(90deg, #4caf50, #2e7d32);
-            border-radius: 5px;
-            padding: 8px;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-        
-        .cable-compartment {
-            background: rgba(156, 39, 176, 0.1);
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            border: 1px dashed rgba(255, 255, 255, 0.3);
-        }
-        
-        .bus-compartment {
-            background: linear-gradient(90deg, #009688, #00796b);
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
+            height: 30px;
         }
         
         .specs {
@@ -437,28 +443,28 @@
         
         .module-indicator {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
+            bottom: 5px;
+            right: 5px;
             background: rgba(0, 0, 0, 0.5);
-            padding: 3px 8px;
-            border-radius: 5px;
-            font-size: 0.8rem;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.7rem;
         }
         
-        .modal {
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
         }
         
-        .modal-content {
+        .modal-dialog {
             background: #2c3e50;
             padding: 30px;
             border-radius: 15px;
@@ -466,6 +472,18 @@
             width: 90%;
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
         
         .modal-buttons {
@@ -553,19 +571,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .breaker-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
         .breaker-modal-content {
             background: #2c3e50;
             padding: 30px;
@@ -648,99 +653,77 @@
         
         .vertical-assembly {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
+            border-radius: 3px;
+            padding: 3px;
+            margin-bottom: 5px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
         }
         
         .vertical-assembly-title {
             text-align: center;
-            font-size: 0.8rem;
-            margin-bottom: 5px;
+            font-size: 0.6rem;
+            margin-bottom: 2px;
             color: #bbdefb;
         }
         
         .vertical-assembly-content {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: space-around;
-            gap: 5px;
-            margin-top: 5px;
-            min-height: 100px;
+            gap: 2px;
+            margin-top: 2px;
+            min-height: 80px;
+            padding: 2px;
         }
         
         .vertical-breaker {
             flex: 1;
-            min-width: 23%;
+            min-width: 24%;
             background: linear-gradient(90deg, #4caf50, #2e7d32);
-            border-radius: 5px;
-            padding: 8px;
+            border-radius: 2px;
+            padding: 3px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.6rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 40px;
-            margin: 2px;
+            height: 30px;
         }
         
         .vertical-assembly-space {
-            height: 30px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-            margin-top: 5px;
+            border-radius: 2px;
+            margin-top: 2px;
         }
         
         .assembly-module-info {
             position: absolute;
-            bottom: 5px;
-            right: 5px;
+            bottom: 2px;
+            right: 2px;
             background: rgba(0, 0, 0, 0.5);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+            padding: 1px 3px;
+            border-radius: 2px;
+            font-size: 0.6rem;
         }
         
         .breaker-info {
-            font-size: 0.7rem;
-            margin-top: 3px;
+            font-size: 0.6rem;
+            margin-top: 1px;
         }
         
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
+        .hidden {
+            display: none !important;
         }
         
-        .modal-dialog {
-            background: #2c3e50;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            position: relative;
+        .compact-column {
+            padding: 2px !important;
+            margin: 0 !important;
         }
         
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
-            cursor: pointer;
+        .compact-section {
+            padding: 2px !important;
         }
     </style>
 </head>
@@ -748,7 +731,7 @@
     <div class="container">
         <header>
             <h1>Конфигуратор ГРЩ SystemeBlock</h1>
-            <p class="subtitle">Профессиональный инструмент для проектирования электрических щитов низкого напряжения с гибкой компоновкой колонн</p>
+            <p class="subtitle">Профессиональный инструмент для проектирования электрических щитов низкого напряжения с точным расчетом модулей</p>
         </header>
         
         <div class="app-container">
@@ -826,7 +809,7 @@
             </div>
             
             <div class="visualization">
-                <h2 class="panel-title">Визуализация шкафа</h2>
+                <h2 class="panel-title">Визуализация шкафа (масштаб 1:5)</h2>
                 <div class="cabinet-container" id="cabinet-visualization">
                     <!-- Визуализация колонн будет здесь -->
                 </div>
@@ -836,7 +819,7 @@
                     <div class="specs-list">
                         <div class="spec-item">Общая ширина: <span class="spec-value" id="total-width">0 мм</span></div>
                         <div class="spec-item">Глубина: <span class="spec-value" id="cabinet-depth">600 мм</span></div>
-                        <div class="spec-item">Высота: <span class="spec-value">2200 мм</span></div>
+                        <div class="spec-item">Высота: <span class="spec-value">2300 мм</span></div>
                         <div class="spec-item">Степень защиты: <span class="spec-value" id="ip-value">IP54</span></div>
                         <div class="spec-item">Номинальный ток: <span class="spec-value" id="total-current">0 А</span></div>
                         <div class="spec-item">Ток КЗ: <span class="spec-value">100 кА</span></div>
@@ -875,79 +858,81 @@
     <div class="modal-overlay" id="breaker-modal">
         <div class="modal-dialog">
             <button class="close-modal" id="close-breaker-modal">&times;</button>
-            <h3 class="breaker-modal-title">Конфигурация автомата</h3>
-            
-            <div class="breaker-config-grid">
-                <div class="breaker-config-group">
-                    <label>Тип расцепителя:</label>
-                    <select id="breaker-trip-unit">
-                        <option value="SystemeLogic2">SystemeLogic 2</option>
-                        <option value="SystemeLogic5">SystemeLogic 5</option>
-                        <option value="TM-D">TM-D</option>
-                    </select>
+            <div class="breaker-modal-content">
+                <h3 class="breaker-modal-title">Конфигурация автомата</h3>
+                
+                <div class="breaker-config-grid">
+                    <div class="breaker-config-group">
+                        <label>Тип расцепителя:</label>
+                        <select id="breaker-trip-unit">
+                            <option value="SystemeLogic2">SystemeLogic 2</option>
+                            <option value="SystemeLogic5">SystemeLogic 5</option>
+                            <option value="TM-D">TM-D</option>
+                        </select>
+                    </div>
+                    
+                    <div class="breaker-config-group">
+                        <label>Дополнительный контакт:</label>
+                        <select id="breaker-aux-contact">
+                            <option value="0">Нет</option>
+                            <option value="1">1 контакт</option>
+                            <option value="2">2 контакта</option>
+                        </select>
+                    </div>
+                    
+                    <div class="breaker-config-group">
+                        <label>Номинальный ток (А):</label>
+                        <select id="breaker-current">
+                            <!-- Динамически заполняется -->
+                        </select>
+                    </div>
+                    
+                    <div class="breaker-config-group">
+                        <label>Способ установки:</label>
+                        <select id="breaker-mounting">
+                            <option value="fixed">Стационарный</option>
+                            <option value="plug-in">Втычной</option>
+                            <option value="withdrawable">Выкатной</option>
+                        </select>
+                    </div>
+                    
+                    <div class="breaker-config-group">
+                        <label>Мотор привод:</label>
+                        <select id="breaker-motor-drive">
+                            <option value="false">Нет</option>
+                            <option value="true">Да</option>
+                        </select>
+                    </div>
+                    
+                    <div class="breaker-config-group" id="orientation-group">
+                        <label>Ориентация установки:</label>
+                        <select id="breaker-orientation">
+                            <option value="horizontal">Горизонтальная</option>
+                            <option value="vertical">Вертикальная</option>
+                        </select>
+                    </div>
+                    
+                    <div class="breaker-config-group">
+                        <label>Количество:</label>
+                        <input type="number" id="breaker-quantity" min="1" value="1">
+                    </div>
                 </div>
                 
-                <div class="breaker-config-group">
-                    <label>Дополнительный контакт:</label>
-                    <select id="breaker-aux-contact">
-                        <option value="0">Нет</option>
-                        <option value="1">1 контакт</option>
-                        <option value="2">2 контакта</option>
-                    </select>
+                <div class="breaker-preview">
+                    <h4>Спецификация автомата</h4>
+                    <div class="breaker-preview-list" id="breaker-preview">
+                        <div class="breaker-preview-item" id="preview-main">Автомат: -</div>
+                        <div class="breaker-preview-item" id="preview-aux">Доп. контакт: -</div>
+                        <div class="breaker-preview-item" id="preview-mounting">Способ установки: -</div>
+                        <div class="breaker-preview-item" id="preview-motor">Мотор привод: -</div>
+                        <div class="breaker-preview-item" id="preview-orientation">Ориентация: -</div>
+                    </div>
                 </div>
                 
-                <div class="breaker-config-group">
-                    <label>Номинальный ток (А):</label>
-                    <select id="breaker-current">
-                        <!-- Динамически заполняется -->
-                    </select>
+                <div class="breaker-config-buttons">
+                    <button class="btn btn-success" id="save-breaker-btn">Сохранить</button>
+                    <button class="btn btn-danger" id="cancel-breaker-btn">Отмена</button>
                 </div>
-                
-                <div class="breaker-config-group">
-                    <label>Способ установки:</label>
-                    <select id="breaker-mounting">
-                        <option value="fixed">Стационарный</option>
-                        <option value="plug-in">Втычной</option>
-                        <option value="withdrawable">Выкатной</option>
-                    </select>
-                </div>
-                
-                <div class="breaker-config-group">
-                    <label>Мотор привод:</label>
-                    <select id="breaker-motor-drive">
-                        <option value="false">Нет</option>
-                        <option value="true">Да</option>
-                    </select>
-                </div>
-                
-                <div class="breaker-config-group">
-                    <label>Ориентация установки:</label>
-                    <select id="breaker-orientation">
-                        <option value="horizontal">Горизонтальная</option>
-                        <option value="vertical">Вертикальная</option>
-                    </select>
-                </div>
-                
-                <div class="breaker-config-group">
-                    <label>Количество:</label>
-                    <input type="number" id="breaker-quantity" min="1" value="1">
-                </div>
-            </div>
-            
-            <div class="breaker-preview">
-                <h4>Спецификация автомата</h4>
-                <div class="breaker-preview-list" id="breaker-preview">
-                    <div class="breaker-preview-item" id="preview-main">Автомат: -</div>
-                    <div class="breaker-preview-item" id="preview-aux">Доп. контакт: -</div>
-                    <div class="breaker-preview-item" id="preview-mounting">Способ установки: -</div>
-                    <div class="breaker-preview-item" id="preview-motor">Мотор привод: -</div>
-                    <div class="breaker-preview-item" id="preview-orientation">Ориентация: -</div>
-                </div>
-            </div>
-            
-            <div class="breaker-config-buttons">
-                <button class="btn btn-success" id="save-breaker-btn">Сохранить</button>
-                <button class="btn btn-danger" id="cancel-breaker-btn">Отмена</button>
             </div>
         </div>
     </div>
@@ -1085,6 +1070,7 @@
             const breakerMounting = document.getElementById('breaker-mounting');
             const breakerMotorDrive = document.getElementById('breaker-motor-drive');
             const breakerOrientation = document.getElementById('breaker-orientation');
+            const orientationGroup = document.getElementById('orientation-group');
             const breakerQuantity = document.getElementById('breaker-quantity');
             
             // Переменные состояния
@@ -1104,6 +1090,7 @@
                 
                 // Инициализация значений
                 document.getElementById('ip-value').textContent = ipRatingSelect.value;
+                document.getElementById('cabinet-depth').textContent = '600 мм';
                 
                 // Добавляем первую колонну по умолчанию
                 addColumnBtn.click();
@@ -1277,6 +1264,13 @@
                 breakerQuantity.value = count;
                 currentBreakerType = breakerType;
                 
+                // Скрыть/показать ориентацию в зависимости от типа автомата
+                if (breakerType === '400A-630A') {
+                    orientationGroup.classList.add('hidden');
+                } else {
+                    orientationGroup.classList.remove('hidden');
+                }
+                
                 // Установить значения по умолчанию или из конфига
                 if (config) {
                     breakerTripUnit.value = config.tripUnit;
@@ -1289,7 +1283,8 @@
                     breakerAuxContact.value = '0';
                     breakerMounting.value = 'fixed';
                     breakerMotorDrive.value = 'false';
-                    breakerOrientation.value = 'horizontal';
+                    // Для автоматов 400A-630A всегда горизонтальная ориентация
+                    breakerOrientation.value = breakerType === '400A-630A' ? 'horizontal' : 'horizontal';
                 }
                 
                 // Обновить доступные токи
@@ -1351,7 +1346,7 @@
                 const current = breakerCurrent.value;
                 const mounting = breakerMounting.value;
                 const motorDrive = breakerMotorDrive.value === 'true';
-                const orientation = breakerOrientation.value;
+                const orientation = currentBreakerType === '400A-630A' ? 'horizontal' : breakerOrientation.value;
                 const quantity = breakerQuantity.value;
                 
                 // Определение артикула основного автомата
@@ -1417,7 +1412,8 @@
                 const current = breakerCurrent.value;
                 const mounting = breakerMounting.value;
                 const motorDrive = breakerMotorDrive.value === 'true';
-                const orientation = breakerOrientation.value;
+                // Для автоматов 400A-630A всегда горизонтальная ориентация
+                const orientation = currentBreakerType === '400A-630A' ? 'horizontal' : breakerOrientation.value;
                 const quantity = parseInt(breakerQuantity.value);
                 
                 // Создаем конфигурацию автомата
@@ -1771,19 +1767,19 @@
                         // Визуализация
                         // Левый блок расширения
                         if (expansionLeft !== 'none') {
-                            const widthPx = parseInt(expansionLeft) / 700 * 200;
-                            const expansionColumn = document.createElement('div');
-                            expansionColumn.className = 'cabinet-column';
-                            expansionColumn.style.width = widthPx + 'px';
-                            expansionColumn.style.background = 'rgba(255, 193, 7, 0.3)';
-                            expansionColumn.innerHTML = `<div class="column-title">${expansionLeft} мм</div>`;
+                            const width = parseInt(expansionLeft);
+                            const widthPx = width / 5;
+                            const expansionColumn = createExpansionColumn(width, widthPx);
                             cabinetVisualization.appendChild(expansionColumn);
                         }
                         
                         // Основная колонна
-                        const columnEl = createColumnElement(200, columnType);
+                        const mainColumn = createMainColumn(isIncomer ? 'Вводная' : 'Секционная', 700, 140);
+                        
+                        // Добавляем оборудование в основную зону
+                        const mainZone = mainColumn.querySelector('.main-zone');
                         const section = document.createElement('div');
-                        section.className = 'section';
+                        section.className = 'section compact-section';
                         
                         // Для секционной колонны: сначала АВР, затем автомат
                         if (columnType === 'sectional' && hasAVR) {
@@ -1809,53 +1805,43 @@
                             section.appendChild(avrEl);
                         }
                         
-                        columnEl.appendChild(section);
-                        cabinetVisualization.appendChild(columnEl);
-                        
-                        // Правый блок расширения
-                        if (expansionRight !== 'none') {
-                            const widthPx = parseInt(expansionRight) / 700 * 200;
-                            const expansionColumn = document.createElement('div');
-                            expansionColumn.className = 'cabinet-column';
-                            expansionColumn.style.width = widthPx + 'px';
-                            expansionColumn.style.background = 'rgba(255, 193, 7, 0.3)';
-                            expansionColumn.innerHTML = `<div class="column-title">${expansionRight} мм</div>`;
-                            cabinetVisualization.appendChild(expansionColumn);
-                        }
-                        
                         // Индикатор модулей
                         const moduleIndicator = document.createElement('div');
                         moduleIndicator.className = 'module-indicator';
                         moduleIndicator.textContent = `Модули: ${incomerCount * 12 + (hasAVR ? 9 : 0)}/32`;
                         section.appendChild(moduleIndicator);
+                        
+                        mainZone.appendChild(section);
+                        cabinetVisualization.appendChild(mainColumn);
+                        
+                        // Правый блок расширения
+                        if (expansionRight !== 'none') {
+                            const width = parseInt(expansionRight);
+                            const widthPx = width / 5;
+                            const expansionColumn = createExpansionColumn(width, widthPx);
+                            cabinetVisualization.appendChild(expansionColumn);
+                        }
                     } 
                     else if (columnType === 'outgoing') {
-                        // Шинный отсек (слева) - 200 мм
+                        // Шинная колонна (200 мм)
                         totalWidthMM += 200;
-                        const busColumn = document.createElement('div');
-                        busColumn.className = 'cabinet-column';
-                        busColumn.style.width = '57px';
-                        busColumn.style.background = 'rgba(0, 150, 136, 0.3)';
-                        busColumn.innerHTML = `<div class="bus-compartment"></div>`;
+                        const busColumn = createBusColumn();
                         cabinetVisualization.appendChild(busColumn);
                         
-                        // Основная колонна (отходящая) - 700 мм
+                        // Основная колонна (700 мм)
                         totalWidthMM += 700;
-                        const columnEl = createColumnElement(200, columnType);
+                        const mainColumn = createMainColumn('Отходящая', 700, 140);
                         
-                        // Секция с автоматами
+                        // Добавляем автоматы в основную зону
+                        const mainZone = mainColumn.querySelector('.main-zone');
                         const section = createBreakerSection(column);
-                        columnEl.appendChild(section);
-                        cabinetVisualization.appendChild(columnEl);
+                        mainZone.appendChild(section);
+                        cabinetVisualization.appendChild(mainColumn);
                         
-                        // Кабельный отсек (справа) - 400 мм (только у стены)
+                        // Кабельная колонна (400 мм) только для одностороннего обслуживания
                         if (layout === 'wall-layout') {
                             totalWidthMM += 400;
-                            const cableColumn = document.createElement('div');
-                            cableColumn.className = 'cabinet-column';
-                            cableColumn.style.width = '114px';
-                            cableColumn.style.background = 'rgba(156, 39, 176, 0.1)';
-                            cableColumn.innerHTML = `<div class="cable-compartment"></div>`;
+                            const cableColumn = createCableColumn();
                             cabinetVisualization.appendChild(cableColumn);
                         }
                         
@@ -1876,36 +1862,92 @@
                 document.getElementById('used-modules').textContent = `${totalModules}/32`;
             }
             
-            function createColumnElement(widthPx, type) {
-                const columnEl = document.createElement('div');
-                columnEl.className = 'cabinet-column';
-                columnEl.style.width = widthPx + 'px';
+            function createExpansionColumn(width, widthPx) {
+                const expansionColumn = document.createElement('div');
+                expansionColumn.className = 'cabinet-column compact-column';
+                expansionColumn.style.width = widthPx + 'px';
+                expansionColumn.style.background = 'rgba(255, 193, 7, 0.3)';
+                expansionColumn.innerHTML = `<div class="column-title">${width} мм</div>`;
                 
-                // Заголовок колонны с типом
-                const columnTitle = document.createElement('div');
-                columnTitle.className = 'column-title';
+                // Добавляем зоны для блока расширения
+                expansionColumn.appendChild(createZone('top-plate', '20px', 'SystemeBlock'));
+                expansionColumn.appendChild(createZone('bus-zone', '40px', 'Шины'));
+                expansionColumn.appendChild(createZone('main-zone', '320px', ''));
+                expansionColumn.appendChild(createZone('bus-zone', '40px', 'Шины'));
+                expansionColumn.appendChild(createZone('bottom-plate', '20px', ''));
+                expansionColumn.appendChild(createZone('base-plate', '20px', 'Цоколь'));
                 
-                if (type === 'incomer') {
-                    columnTitle.textContent = 'Вводная';
-                    columnEl.style.background = 'rgba(33, 150, 243, 0.3)';
-                } 
-                else if (type === 'sectional') {
-                    columnTitle.textContent = 'Секционная';
-                    columnEl.style.background = 'rgba(255, 152, 0, 0.3)';
+                return expansionColumn;
+            }
+            
+            function createMainColumn(title, width, widthPx) {
+                const column = document.createElement('div');
+                column.className = 'cabinet-column compact-column';
+                column.style.width = widthPx + 'px';
+                column.innerHTML = `<div class="column-title">${title}</div>`;
+                
+                // Зоны колонны
+                column.appendChild(createZone('top-plate', '20px', 'SystemeBlock'));
+                column.appendChild(createZone('bus-zone', '40px', 'Шины'));
+                column.appendChild(createZone('main-zone', '320px', ''));
+                column.appendChild(createZone('bus-zone', '40px', 'Шины'));
+                column.appendChild(createZone('bottom-plate', '20px', ''));
+                column.appendChild(createZone('base-plate', '20px', 'Цоколь'));
+                
+                return column;
+            }
+            
+            function createBusColumn() {
+                const column = document.createElement('div');
+                column.className = 'cabinet-column compact-column';
+                column.style.width = '40px';
+                column.innerHTML = `<div class="column-title">Шинная</div>`;
+                
+                // Зоны шинной колонны
+                column.appendChild(createZone('top-plate', '20px', 'SystemeBlock'));
+                column.appendChild(createZone('bus-zone', '40px', 'Шины'));
+                column.appendChild(createZone('main-zone', '320px', ''));
+                column.appendChild(createZone('bus-zone', '40px', 'Шины'));
+                column.appendChild(createZone('bottom-plate', '20px', ''));
+                column.appendChild(createZone('base-plate', '20px', 'Цоколь'));
+                
+                return column;
+            }
+            
+            function createCableColumn() {
+                const column = document.createElement('div');
+                column.className = 'cabinet-column compact-column';
+                column.style.width = '80px';
+                column.innerHTML = `<div class="column-title">Кабельная</div>`;
+                
+                // Зоны кабельной колонны
+                column.appendChild(createZone('top-plate', '20px', 'SystemeBlock'));
+                column.appendChild(createZone('bus-zone', '40px', ''));
+                column.appendChild(createZone('cable-zone', '320px', 'Кабели'));
+                column.appendChild(createZone('bus-zone', '40px', ''));
+                column.appendChild(createZone('bottom-plate', '20px', ''));
+                column.appendChild(createZone('base-plate', '20px', 'Цоколь'));
+                
+                return column;
+            }
+            
+            function createZone(className, height, text) {
+                const zone = document.createElement('div');
+                zone.className = `column-zone ${className}`;
+                zone.style.height = height;
+                if (text) {
+                    zone.textContent = text;
+                    zone.style.display = 'flex';
+                    zone.style.alignItems = 'center';
+                    zone.style.justifyContent = 'center';
+                    zone.style.fontSize = '0.6rem';
                 }
-                else if (type === 'outgoing') {
-                    columnTitle.textContent = 'Отходящая';
-                    columnEl.style.background = 'rgba(76, 175, 80, 0.3)';
-                }
-                
-                columnEl.appendChild(columnTitle);
-                
-                return columnEl;
+                return zone;
             }
             
             function createBreakerSection(column) {
                 const section = document.createElement('div');
-                section.className = 'section';
+                section.className = 'section compact-section';
                 
                 const breakerItems = column.querySelectorAll('.breaker-item');
                 let moduleCount = calculateUsedModules(column);
@@ -1935,7 +1977,7 @@
                 // Обрабатываем горизонтальные автоматы
                 horizontalBreakers.forEach(item => {
                     const type = item.dataset.type;
-                    const height = (type === '100A-250A') ? '37.5px' : '50px';
+                    const height = (type === '100A-250A') ? '30px' : '40px';
                     const current = item.dataset.current;
                     
                     const breakerEl = document.createElement('div');
@@ -1958,6 +2000,7 @@
                     const assemblyContent = document.createElement('div');
                     assemblyContent.className = 'vertical-assembly-content';
                     
+                    // Добавляем все автоматы сборки в один ряд
                     assembly.forEach(item => {
                         const current = item.dataset.current;
                         
@@ -1968,11 +2011,6 @@
                     });
                     
                     assemblyEl.appendChild(assemblyContent);
-                    
-                    // Добавляем свободное пространство под сборкой
-                    const spaceEl = document.createElement('div');
-                    spaceEl.className = 'vertical-assembly-space';
-                    assemblyEl.appendChild(spaceEl);
                     
                     // Информация о модулях сборки
                     const moduleInfo = document.createElement('div');
@@ -2074,7 +2112,7 @@
                         excelPreviewTable.appendChild(mainRow);
                         
                         // Добавляем строки для каждого автомата и его аксессуаров
-                        breakerItems.forEach((item, idx) => {
+                        breakerItems.forEach(item => {
                             const type = item.dataset.type;
                             const tripUnit = item.dataset.tripUnit;
                             const auxContact = item.dataset.auxContact;
