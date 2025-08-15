@@ -124,8 +124,8 @@
             padding: 12px;
             border-radius: 8px;
             border: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
             font-size: 1rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -133,7 +133,7 @@
         input:focus, select:focus {
             outline: none;
             border-color: #2196f3;
-            background: rgba(33, 150, 243, 0.1);
+            background: rgba(255, 255, 255, 0.95);
         }
         
         .btn {
@@ -404,6 +404,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
         }
         
         .delete-breaker-btn {
@@ -552,7 +553,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        /* Стили для модального окна конфигурации автомата */
         .breaker-modal {
             display: none;
             position: fixed;
@@ -645,6 +645,103 @@
                 grid-template-columns: 1fr;
             }
         }
+        
+        .vertical-assembly {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        
+        .vertical-assembly-title {
+            text-align: center;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #bbdefb;
+        }
+        
+        .vertical-assembly-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 5px;
+            margin-top: 5px;
+            min-height: 100px;
+        }
+        
+        .vertical-breaker {
+            flex: 1;
+            min-width: 23%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            border-radius: 5px;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            margin: 2px;
+        }
+        
+        .vertical-assembly-space {
+            height: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        
+        .assembly-module-info {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+        
+        .breaker-info {
+            font-size: 0.7rem;
+            margin-top: 3px;
+        }
+        
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-dialog {
+            background: #2c3e50;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -710,15 +807,14 @@
                 </div>
                 
                 <div class="excel-preview">
-                    <h4>Предпросмотр данных для Excel</h4>
+                    <h4>Предпросмотр спецификации</h4>
                     <table class="excel-table" id="excel-preview-table">
                         <thead>
                             <tr>
-                                <th>Тип</th>
+                                <th>Позиция</th>
                                 <th>Артикул</th>
-                                <th>Описание</th>
+                                <th>Наименование</th>
                                 <th>Кол-во</th>
-                                <th>Номинал</th>
                                 <th>Примечание</th>
                             </tr>
                         </thead>
@@ -758,12 +854,14 @@
             <p>Конфигуратор основан на каталоге SystemeBlock | Низковольтные комплектные устройства на токи до 6300А</p>
             <p>Все спецификации соответствуют стандартам ГОСТ МЭК 61439-1 и ГОСТ МЭК 61439-2</p>
             <p>Экспорт в Excel позволяет генерировать данные для последующего создания чертежей в AutoCAD</p>
+            <p>Разработчик: <strong>СтаниСофт</strong></p>
         </div>
     </div>
 
     <!-- Модальное окно подтверждения -->
-    <div class="modal" id="confirmation-modal">
-        <div class="modal-content">
+    <div class="modal-overlay" id="confirmation-modal">
+        <div class="modal-dialog">
+            <button class="close-modal" id="close-confirmation-modal">&times;</button>
             <h3 id="modal-title">Подтвердите действие</h3>
             <p id="modal-message">Превышено максимальное количество модулей (32)! Доступно: 5 модулей. Добавить новую колонну?</p>
             <div class="modal-buttons">
@@ -774,8 +872,9 @@
     </div>
 
     <!-- Модальное окно конфигурации автомата -->
-    <div class="breaker-modal" id="breaker-modal">
-        <div class="breaker-modal-content">
+    <div class="modal-overlay" id="breaker-modal">
+        <div class="modal-dialog">
+            <button class="close-modal" id="close-breaker-modal">&times;</button>
             <h3 class="breaker-modal-title">Конфигурация автомата</h3>
             
             <div class="breaker-config-grid">
@@ -822,6 +921,14 @@
                 </div>
                 
                 <div class="breaker-config-group">
+                    <label>Ориентация установки:</label>
+                    <select id="breaker-orientation">
+                        <option value="horizontal">Горизонтальная</option>
+                        <option value="vertical">Вертикальная</option>
+                    </select>
+                </div>
+                
+                <div class="breaker-config-group">
                     <label>Количество:</label>
                     <input type="number" id="breaker-quantity" min="1" value="1">
                 </div>
@@ -834,6 +941,7 @@
                     <div class="breaker-preview-item" id="preview-aux">Доп. контакт: -</div>
                     <div class="breaker-preview-item" id="preview-mounting">Способ установки: -</div>
                     <div class="breaker-preview-item" id="preview-motor">Мотор привод: -</div>
+                    <div class="breaker-preview-item" id="preview-orientation">Ориентация: -</div>
                 </div>
             </div>
             
@@ -930,22 +1038,12 @@
             
             <div class="outgoing-config" style="display: none;">
                 <div class="input-group">
-                    <label>Исполнение автоматов:</label>
-                    <select class="breaker-layout">
-                        <option value="horizontal">Горизонтальное</option>
-                        <option value="vertical">Вертикальное</option>
-                        <option value="mixed">Комбинированное</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label>Конфигурация автоматов:</label>
+                    <label>Тип автоматов:</label>
                     <div class="breaker-config">
                         <select class="breaker-type">
                             <option value="100A-250A">100А-250А (3 модуля)</option>
                             <option value="400A-630A">400А-630А (4 модуля)</option>
                         </select>
-                        <input type="number" class="breaker-count" min="1" max="32" value="1">
                     </div>
                 </div>
                 
@@ -962,14 +1060,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Ссылки на элементы DOM
             const columnsContainer = document.getElementById('columns-container');
             const cabinetVisualization = document.getElementById('cabinet-visualization');
             const addColumnBtn = document.getElementById('add-column-btn');
             const columnTemplate = document.getElementById('column-template');
-            const modal = document.getElementById('confirmation-modal');
+            const confirmationModal = document.getElementById('confirmation-modal');
             const modalMessage = document.getElementById('modal-message');
             const confirmAddBtn = document.getElementById('confirm-add');
             const cancelAddBtn = document.getElementById('cancel-add');
+            const closeConfirmationModal = document.getElementById('close-confirmation-modal');
             const refreshBtn = document.getElementById('refresh-btn');
             const ipRatingSelect = document.getElementById('ip-rating');
             const exportExcelBtn = document.getElementById('export-excel-btn');
@@ -978,54 +1078,86 @@
             const breakerModal = document.getElementById('breaker-modal');
             const saveBreakerBtn = document.getElementById('save-breaker-btn');
             const cancelBreakerBtn = document.getElementById('cancel-breaker-btn');
+            const closeBreakerModal = document.getElementById('close-breaker-modal');
             const breakerTripUnit = document.getElementById('breaker-trip-unit');
             const breakerCurrent = document.getElementById('breaker-current');
             const breakerAuxContact = document.getElementById('breaker-aux-contact');
             const breakerMounting = document.getElementById('breaker-mounting');
             const breakerMotorDrive = document.getElementById('breaker-motor-drive');
+            const breakerOrientation = document.getElementById('breaker-orientation');
             const breakerQuantity = document.getElementById('breaker-quantity');
             
+            // Переменные состояния
             let columnCounter = 1;
             let groupCounter = 1;
             let currentModalData = {};
-            let currentBreakerConfigCallback = null;
             let currentBreakerType = '';
             let currentBreakerColumn = null;
+            let currentBreakerItem = null;
             
-            // Обновление визуализации по кнопке
-            refreshBtn.addEventListener('click', updateVisualization);
+            // Инициализация приложения
+            initApp();
             
-            // Обновление степени защиты IP
-            ipRatingSelect.addEventListener('change', function() {
-                document.getElementById('ip-value').textContent = this.value;
-            });
+            function initApp() {
+                // Обработчики событий
+                setupEventListeners();
+                
+                // Инициализация значений
+                document.getElementById('ip-value').textContent = ipRatingSelect.value;
+                
+                // Добавляем первую колонну по умолчанию
+                addColumnBtn.click();
+            }
             
-            // Общие настройки
-            const layoutOptions = document.querySelectorAll('.layout-option');
-            layoutOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    layoutOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    const depth = this.querySelector('input').id === 'wall-layout' ? '600 мм' : '1000 мм';
-                    document.getElementById('cabinet-depth').textContent = depth;
-                    updateVisualization();
+            function setupEventListeners() {
+                // Обновление визуализации
+                refreshBtn.addEventListener('click', updateVisualization);
+                
+                // Обновление степени защиты IP
+                ipRatingSelect.addEventListener('change', function() {
+                    document.getElementById('ip-value').textContent = this.value;
                 });
-            });
+                
+                // Общие настройки
+                const layoutOptions = document.querySelectorAll('.layout-option');
+                layoutOptions.forEach(option => {
+                    option.addEventListener('click', function() {
+                        layoutOptions.forEach(opt => opt.classList.remove('active'));
+                        this.classList.add('active');
+                        const depth = this.querySelector('input').id === 'wall-layout' ? '600 мм' : '1000 мм';
+                        document.getElementById('cabinet-depth').textContent = depth;
+                        updateVisualization();
+                    });
+                });
+                
+                // Закрытие модальных окон
+                closeConfirmationModal.addEventListener('click', () => confirmationModal.style.display = 'none');
+                closeBreakerModal.addEventListener('click', () => breakerModal.style.display = 'none');
+                cancelAddBtn.addEventListener('click', () => confirmationModal.style.display = 'none');
+                cancelBreakerBtn.addEventListener('click', () => breakerModal.style.display = 'none');
+                
+                // Конфигурация автомата
+                breakerTripUnit.addEventListener('change', updateBreakerCurrentOptions);
+                breakerAuxContact.addEventListener('change', updateBreakerPreview);
+                breakerCurrent.addEventListener('change', updateBreakerPreview);
+                breakerMounting.addEventListener('change', updateBreakerPreview);
+                breakerMotorDrive.addEventListener('change', updateBreakerPreview);
+                breakerOrientation.addEventListener('change', updateBreakerPreview);
+                
+                // Добавление колонны
+                addColumnBtn.addEventListener('click', addNewColumn);
+                
+                // Обработчик подтверждения добавления колонны
+                confirmAddBtn.addEventListener('click', handleConfirmAdd);
+                
+                // Обработчики для модального окна автомата
+                saveBreakerBtn.addEventListener('click', handleSaveBreaker);
+                
+                // Экспорт в Excel
+                exportExcelBtn.addEventListener('click', exportToExcel);
+            }
             
-            // Закрытие модального окна
-            cancelAddBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-            });
-            
-            // Конфигурация автомата
-            breakerTripUnit.addEventListener('change', updateBreakerCurrentOptions);
-            breakerAuxContact.addEventListener('change', updateBreakerPreview);
-            breakerCurrent.addEventListener('change', updateBreakerPreview);
-            breakerMounting.addEventListener('change', updateBreakerPreview);
-            breakerMotorDrive.addEventListener('change', updateBreakerPreview);
-            
-            // Добавление колонны
-            addColumnBtn.addEventListener('click', function() {
+            function addNewColumn() {
                 const columnClone = document.importNode(columnTemplate.content, true);
                 const columnNumber = columnCounter++;
                 columnClone.querySelector('.column-number').textContent = columnNumber;
@@ -1034,145 +1166,131 @@
                 const deleteBtn = columnClone.querySelector('.delete-column-btn');
                 const columnTypeSelect = columnClone.querySelector('.column-type');
                 const addBreakerBtn = columnClone.querySelector('.add-breaker-btn');
-                
-                deleteBtn.addEventListener('click', function() {
-                    this.closest('.column-item').remove();
-                    renumberColumns();
-                    updateVisualization();
-                    updateExcelPreview();
-                });
-                
-                columnTypeSelect.addEventListener('change', function() {
-                    const columnItem = this.closest('.column-item');
-                    const incomerConfig = columnItem.querySelector('.incomer-config');
-                    const sectionalConfig = columnItem.querySelector('.sectional-config');
-                    const outgoingConfig = columnItem.querySelector('.outgoing-config');
-                    const expansionConfig = columnItem.querySelector('.expansion-config');
-                    
-                    incomerConfig.style.display = 'none';
-                    sectionalConfig.style.display = 'none';
-                    outgoingConfig.style.display = 'none';
-                    
-                    // Сброс блоков расширения при смене типа
-                    const expansionLeft = columnItem.querySelector('.expansion-left');
-                    const expansionRight = columnItem.querySelector('.expansion-right');
-                    expansionLeft.value = 'none';
-                    expansionRight.value = 'none';
-                    
-                    if (this.value === 'incomer') {
-                        incomerConfig.style.display = 'block';
-                        expansionConfig.style.display = 'grid';
-                    } else if (this.value === 'sectional') {
-                        sectionalConfig.style.display = 'block';
-                        expansionConfig.style.display = 'grid';
-                    } else if (this.value === 'outgoing') {
-                        outgoingConfig.style.display = 'block';
-                        expansionConfig.style.display = 'none';
-                        // Назначение группы для отходящих колонн
-                        if (!columnItem.dataset.outgoingGroup) {
-                            columnItem.dataset.outgoingGroup = groupCounter++;
-                        }
-                    }
-                    
-                    updateVisualization();
-                    updateExcelPreview();
-                });
-                
-                // Обработчик для блоков расширения
-                const expansionSelects = columnClone.querySelectorAll('.expansion-left, .expansion-right');
-                expansionSelects.forEach(select => {
-                    select.addEventListener('change', function() {
-                        const columnItem = this.closest('.column-item');
-                        const leftSelect = columnItem.querySelector('.expansion-left');
-                        const rightSelect = columnItem.querySelector('.expansion-right');
-                        
-                        // Проверка ограничений для 400мм блоков
-                        if (leftSelect.value === '400' && rightSelect.value === '400') {
-                            if (this === leftSelect) {
-                                rightSelect.value = 'none';
-                            } else {
-                                leftSelect.value = 'none';
-                            }
-                        }
-                        
-                        updateVisualization();
-                        updateExcelPreview();
-                    });
-                });
-                
-                // Обработчик для АВР в секционной колонне
                 const avrCheckbox = columnClone.querySelector('.avr-checkbox');
-                if (avrCheckbox) {
-                    avrCheckbox.addEventListener('change', function() {
-                        updateVisualization();
-                        updateExcelPreview();
-                    });
-                }
-                
-                // Обработчик для количества автоматов во вводной
                 const incomerCountSelect = columnClone.querySelector('.incomer-count');
-                if (incomerCountSelect) {
-                    incomerCountSelect.addEventListener('change', function() {
-                        updateVisualization();
-                        updateExcelPreview();
-                    });
-                }
-                
-                // Обработчик для номинала автомата в секционной колонне
                 const sectionalBreakerSize = columnClone.querySelector('.sectional-config .breaker-size');
-                if (sectionalBreakerSize) {
-                    sectionalBreakerSize.addEventListener('change', function() {
-                        updateVisualization();
-                        updateExcelPreview();
-                    });
-                }
-                
-                // Обработчик для номинала автомата во вводной колонне
                 const incomerBreakerSize = columnClone.querySelector('.incomer-config .breaker-size');
-                if (incomerBreakerSize) {
-                    incomerBreakerSize.addEventListener('change', function() {
-                        updateVisualization();
-                        updateExcelPreview();
-                    });
-                }
+                const expansionSelects = columnClone.querySelectorAll('.expansion-left, .expansion-right');
                 
-                addBreakerBtn?.addEventListener('click', function() {
-                    const columnItem = this.closest('.column-item');
-                    const breakerType = columnItem.querySelector('.breaker-type').value;
-                    const breakerCount = parseInt(columnItem.querySelector('.breaker-count').value);
-                    const groupId = columnItem.dataset.outgoingGroup;
-                    
-                    // Сохраняем данные для конфигурации
-                    currentBreakerType = breakerType;
-                    currentBreakerColumn = columnItem;
-                    
-                    // Открываем модальное окно конфигурации автомата
-                    showBreakerModal(breakerCount);
+                // Установка обработчиков
+                deleteBtn.addEventListener('click', deleteColumn);
+                columnTypeSelect.addEventListener('change', handleColumnTypeChange);
+                addBreakerBtn?.addEventListener('click', handleAddBreaker);
+                avrCheckbox?.addEventListener('change', updateVisualization);
+                incomerCountSelect?.addEventListener('change', updateVisualization);
+                sectionalBreakerSize?.addEventListener('change', updateVisualization);
+                incomerBreakerSize?.addEventListener('change', updateVisualization);
+                
+                expansionSelects.forEach(select => {
+                    select.addEventListener('change', handleExpansionChange);
                 });
                 
+                // Добавление колонны в контейнер
                 columnsContainer.appendChild(columnClone);
                 updateVisualization();
                 updateExcelPreview();
-            });
+            }
             
-            // Обработчик подтверждения добавления колонны
-            confirmAddBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-                const { groupId, breakerType, breakerCount } = currentModalData;
-                addBreakersWithDistribution(groupId, breakerType, breakerCount);
+            function deleteColumn() {
+                this.closest('.column-item').remove();
+                renumberColumns();
+                updateVisualization();
                 updateExcelPreview();
-            });
+            }
             
-            // Показать модальное окно конфигурации автомата
-            function showBreakerModal(count) {
+            function handleColumnTypeChange() {
+                const columnItem = this.closest('.column-item');
+                const incomerConfig = columnItem.querySelector('.incomer-config');
+                const sectionalConfig = columnItem.querySelector('.sectional-config');
+                const outgoingConfig = columnItem.querySelector('.outgoing-config');
+                const expansionConfig = columnItem.querySelector('.expansion-config');
+                
+                incomerConfig.style.display = 'none';
+                sectionalConfig.style.display = 'none';
+                outgoingConfig.style.display = 'none';
+                
+                // Сброс блоков расширения
+                const expansionLeft = columnItem.querySelector('.expansion-left');
+                const expansionRight = columnItem.querySelector('.expansion-right');
+                expansionLeft.value = 'none';
+                expansionRight.value = 'none';
+                
+                if (this.value === 'incomer') {
+                    incomerConfig.style.display = 'block';
+                    expansionConfig.style.display = 'grid';
+                } else if (this.value === 'sectional') {
+                    sectionalConfig.style.display = 'block';
+                    expansionConfig.style.display = 'grid';
+                } else if (this.value === 'outgoing') {
+                    outgoingConfig.style.display = 'block';
+                    expansionConfig.style.display = 'none';
+                    // Назначение группы для отходящих колонн
+                    if (!columnItem.dataset.outgoingGroup) {
+                        columnItem.dataset.outgoingGroup = groupCounter++;
+                    }
+                }
+                
+                updateVisualization();
+                updateExcelPreview();
+            }
+            
+            function handleExpansionChange() {
+                const columnItem = this.closest('.column-item');
+                const leftSelect = columnItem.querySelector('.expansion-left');
+                const rightSelect = columnItem.querySelector('.expansion-right');
+                
+                // Проверка ограничений для 400мм блоков
+                if (leftSelect.value === '400' && rightSelect.value === '400') {
+                    if (this === leftSelect) {
+                        rightSelect.value = 'none';
+                    } else {
+                        leftSelect.value = 'none';
+                    }
+                }
+                
+                updateVisualization();
+                updateExcelPreview();
+            }
+            
+            function handleAddBreaker() {
+                const columnItem = this.closest('.column-item');
+                const breakerType = columnItem.querySelector('.breaker-type').value;
+                
+                // Сохраняем данные для конфигурации
+                currentBreakerType = breakerType;
+                currentBreakerColumn = columnItem;
+                currentBreakerItem = null;
+                
+                // Открываем модальное окно конфигурации автомата
+                showBreakerModal(1, breakerType);
+            }
+            
+            function handleConfirmAdd() {
+                confirmationModal.style.display = 'none';
+                const { groupId, breakerConfig, breakerCount } = currentModalData;
+                addBreakersWithDistribution(groupId, breakerConfig, breakerCount);
+                updateExcelPreview();
+            }
+            
+            function showBreakerModal(count, breakerType, config) {
                 // Установить количество
                 breakerQuantity.value = count;
+                currentBreakerType = breakerType;
                 
-                // Сбросить значения
-                breakerTripUnit.value = 'SystemeLogic2';
-                breakerAuxContact.value = '0';
-                breakerMounting.value = 'fixed';
-                breakerMotorDrive.value = 'false';
+                // Установить значения по умолчанию или из конфига
+                if (config) {
+                    breakerTripUnit.value = config.tripUnit;
+                    breakerAuxContact.value = config.auxContact;
+                    breakerMounting.value = config.mounting;
+                    breakerMotorDrive.value = config.motorDrive;
+                    breakerOrientation.value = config.orientation || 'horizontal';
+                } else {
+                    breakerTripUnit.value = 'SystemeLogic2';
+                    breakerAuxContact.value = '0';
+                    breakerMounting.value = 'fixed';
+                    breakerMotorDrive.value = 'false';
+                    breakerOrientation.value = 'horizontal';
+                }
                 
                 // Обновить доступные токи
                 updateBreakerCurrentOptions();
@@ -1181,35 +1299,59 @@
                 breakerModal.style.display = 'flex';
             }
             
-            // Обновить доступные токи в зависимости от типа расцепителя
             function updateBreakerCurrentOptions() {
                 const tripUnit = breakerTripUnit.value;
                 breakerCurrent.innerHTML = '';
-                
+
                 let currents = [];
-                if (tripUnit === 'SystemeLogic2' || tripUnit === 'SystemeLogic5') {
-                    currents = [40, 100, 160, 250, 400, 630];
-                } else if (tripUnit === 'TM-D') {
-                    currents = [16, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 400, 500, 630];
-                }
                 
+                // Для автоматов 100A-250A
+                if (currentBreakerType === '100A-250A') {
+                    if (tripUnit === 'TM-D') {
+                        currents = [100, 125, 160, 200, 250];
+                    } else if (tripUnit === 'SystemeLogic2' || tripUnit === 'SystemeLogic5') {
+                        currents = [100, 160, 250];
+                    }
+                } 
+                // Для автоматов 400A-630A
+                else if (currentBreakerType === '400A-630A') {
+                    if (tripUnit === 'TM-D') {
+                        currents = [400, 500, 630];
+                    } else if (tripUnit === 'SystemeLogic2' || tripUnit === 'SystemeLogic5') {
+                        currents = [400, 630];
+                    }
+                }
+
                 currents.forEach(current => {
                     const option = document.createElement('option');
                     option.value = current;
-                    option.textContent = current;
+                    option.textContent = current + 'А';
+                    
+                    // Установить выбранное значение из конфига
+                    if (currentBreakerItem && currentBreakerItem.dataset.current == current) {
+                        option.selected = true;
+                    }
+                    
                     breakerCurrent.appendChild(option);
                 });
+                
+                // Если для текущего типа расцепителя нет доступных токов
+                if (currents.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = 'Нет доступных токов для выбранного типа';
+                    breakerCurrent.appendChild(option);
+                }
                 
                 updateBreakerPreview();
             }
             
-            // Обновить предпросмотр спецификации автомата
             function updateBreakerPreview() {
                 const tripUnit = breakerTripUnit.value;
                 const auxContact = breakerAuxContact.value;
                 const current = breakerCurrent.value;
                 const mounting = breakerMounting.value;
                 const motorDrive = breakerMotorDrive.value === 'true';
+                const orientation = breakerOrientation.value;
                 const quantity = breakerQuantity.value;
                 
                 // Определение артикула основного автомата
@@ -1218,13 +1360,13 @@
                 
                 if (tripUnit === 'TM-D') {
                     breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}L3DF`;
-                    breakerDesc = `Автомат SPC${getSizeByCurrent(current)} ${current}А TM-D`;
+                    breakerDesc = `Автомат SPC${getSizeByCurrent(current)} TM-D ${current}А`;
                 } else if (tripUnit === 'SystemeLogic2') {
                     breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}22L3DF`;
-                    breakerDesc = `Автомат SPC${getSizeByCurrent(current)} ${current}А SystemeLogic 2`;
+                    breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 2 ${current}А`;
                 } else if (tripUnit === 'SystemeLogic5') {
                     breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}52E3DFC`;
-                    breakerDesc = `Автомат SPC${getSizeByCurrent(current)} ${current}А SystemeLogic 5`;
+                    breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 5 ${current}А`;
                 }
                 
                 document.getElementById('preview-main').textContent = `${breakerDesc} (${breakerRef})`;
@@ -1255,9 +1397,11 @@
                 } else {
                     document.getElementById('preview-motor').textContent = 'Мотор привод: нет';
                 }
+                
+                // Ориентация
+                document.getElementById('preview-orientation').textContent = `Ориентация: ${orientation === 'horizontal' ? 'Горизонтальная' : 'Вертикальная'}`;
             }
             
-            // Определить размер автомата по току
             function getSizeByCurrent(current) {
                 const currentVal = parseInt(current);
                 if (currentVal <= 100) return '100';
@@ -1267,13 +1411,13 @@
                 return '630';
             }
             
-            // Обработчики для модального окна автомата
-            saveBreakerBtn.addEventListener('click', function() {
+            function handleSaveBreaker() {
                 const tripUnit = breakerTripUnit.value;
                 const auxContact = breakerAuxContact.value;
                 const current = breakerCurrent.value;
                 const mounting = breakerMounting.value;
                 const motorDrive = breakerMotorDrive.value === 'true';
+                const orientation = breakerOrientation.value;
                 const quantity = parseInt(breakerQuantity.value);
                 
                 // Создаем конфигурацию автомата
@@ -1282,63 +1426,209 @@
                     auxContact: auxContact,
                     current: current,
                     mounting: mounting,
-                    motorDrive: motorDrive
+                    motorDrive: motorDrive,
+                    orientation: orientation,
+                    type: currentBreakerType
                 };
                 
-                // Добавляем автоматы в текущую колонну
-                for (let i = 0; i < quantity; i++) {
-                    addBreakerToColumn(currentBreakerColumn, currentBreakerType, breakerConfig);
+                // Если редактируем существующий автомат
+                if (currentBreakerItem) {
+                    updateBreakerItem(currentBreakerItem, breakerConfig);
+                    breakerModal.style.display = 'none';
+                } 
+                // Иначе добавляем новые автоматы
+                else {
+                    // Проверка на превышение модулей
+                    const requiredModules = calculateRequiredModules(breakerConfig, quantity);
+                    const groupId = currentBreakerColumn.dataset.outgoingGroup;
+                    
+                    // Проверка свободного места в текущей колонне
+                    let currentModules = calculateUsedModules(currentBreakerColumn);
+                    const freeModules = 32 - currentModules;
+                    
+                    if (requiredModules > freeModules) {
+                        // Сохраняем данные для использования после подтверждения
+                        currentModalData = {
+                            groupId: groupId,
+                            breakerConfig: breakerConfig,
+                            breakerCount: quantity
+                        };
+                        
+                        // Закрываем окно конфигурации автомата
+                        breakerModal.style.display = 'none';
+                        
+                        // Показываем модальное окно для подтверждения
+                        modalMessage.textContent = `Превышено максимальное количество модулей (32)! Доступно: ${freeModules} модулей. Добавить новую колонну?`;
+                        confirmationModal.style.display = 'flex';
+                    } else {
+                        // Добавляем автоматы в текущую колонну
+                        for (let i = 0; i < quantity; i++) {
+                            addBreakerToColumn(currentBreakerColumn, breakerConfig);
+                        }
+                        breakerModal.style.display = 'none';
+                        updateVisualization();
+                        updateExcelPreview();
+                    }
+                }
+            }
+            
+            function calculateRequiredModules(config, count) {
+                let requiredModules = 0;
+                
+                // Для вертикальных автоматов требуется сборка
+                if (config.orientation === 'vertical') {
+                    // Каждая сборка занимает 8 модулей и вмещает до 4 автоматов
+                    const assembliesNeeded = Math.ceil(count / 4);
+                    requiredModules = assembliesNeeded * 8;
+                } else {
+                    // Для горизонтальных автоматов
+                    const moduleSize = (config.type === '100A-250A') ? 3 : 4;
+                    requiredModules = moduleSize * count;
                 }
                 
-                breakerModal.style.display = 'none';
-                updateVisualization();
-                updateExcelPreview();
-            });
+                return requiredModules;
+            }
             
-            cancelBreakerBtn.addEventListener('click', function() {
-                breakerModal.style.display = 'none';
-            });
+            function calculateUsedModules(column) {
+                let usedModules = 0;
+                const breakerItems = column.querySelectorAll('.breaker-item');
+                
+                // Собираем вертикальные автоматы по сборкам
+                const verticalAssemblies = {};
+                breakerItems.forEach(item => {
+                    if (item.dataset.orientation === 'vertical') {
+                        const assemblyId = item.dataset.assemblyId;
+                        if (!verticalAssemblies[assemblyId]) {
+                            verticalAssemblies[assemblyId] = [];
+                        }
+                        verticalAssemblies[assemblyId].push(item);
+                    }
+                });
+                
+                // Считаем модули для вертикальных сборок
+                Object.values(verticalAssemblies).forEach(assembly => {
+                    // Каждая сборка занимает 8 модулей
+                    usedModules += 8;
+                });
+                
+                // Считаем модули для горизонтальных автоматов
+                breakerItems.forEach(item => {
+                    if (item.dataset.orientation === 'horizontal') {
+                        const type = item.dataset.type;
+                        usedModules += (type === '100A-250A') ? 3 : 4;
+                    }
+                });
+                
+                return usedModules;
+            }
             
-            // Добавление автомата в колонну
-            function addBreakerToColumn(column, type, config) {
+            function addBreakerToColumn(column, config) {
                 const breakerItem = document.createElement('div');
                 breakerItem.className = 'breaker-item';
-                breakerItem.dataset.type = type;
+                breakerItem.dataset.type = config.type;
                 breakerItem.dataset.tripUnit = config.tripUnit;
                 breakerItem.dataset.auxContact = config.auxContact;
                 breakerItem.dataset.current = config.current;
                 breakerItem.dataset.mounting = config.mounting;
                 breakerItem.dataset.motorDrive = config.motorDrive;
+                breakerItem.dataset.orientation = config.orientation;
+                
+                // Для вертикальных автоматов генерируем ID сборки
+                if (config.orientation === 'vertical') {
+                    // Поиск существующей сборки с менее чем 4 автоматами
+                    let assemblyFound = false;
+                    const existingAssemblies = {};
+                    
+                    column.querySelectorAll('.breaker-item[data-orientation="vertical"]').forEach(item => {
+                        const assemblyId = item.dataset.assemblyId;
+                        if (!existingAssemblies[assemblyId]) {
+                            existingAssemblies[assemblyId] = [];
+                        }
+                        existingAssemblies[assemblyId].push(item);
+                    });
+                    
+                    // Поиск сборки с местом
+                    for (const [assemblyId, breakers] of Object.entries(existingAssemblies)) {
+                        if (breakers.length < 4) {
+                            breakerItem.dataset.assemblyId = assemblyId;
+                            assemblyFound = true;
+                            break;
+                        }
+                    }
+                    
+                    // Если не нашли свободной сборки, создаем новую
+                    if (!assemblyFound) {
+                        breakerItem.dataset.assemblyId = 'assembly-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+                    }
+                }
                 
                 // Отображаем краткую информацию
                 breakerItem.innerHTML = `
-                    <span>${config.current}А (${config.tripUnit})</span>
+                    <span>${config.current}А</span>
+                    <div class="breaker-info">${config.orientation === 'vertical' ? 'Вертикальный' : 'Горизонтальный'}</div>
                     <button class="delete-breaker-btn">
                         <i class="fas fa-times"></i>
                     </button>
                 `;
                 
-                breakerItem.querySelector('.delete-breaker-btn').addEventListener('click', function() {
+                // Обработчик удаления автомата
+                breakerItem.querySelector('.delete-breaker-btn').addEventListener('click', function(e) {
+                    e.stopPropagation();
                     breakerItem.remove();
                     updateVisualization();
                     updateExcelPreview();
                 });
                 
+                // Обработчик для редактирования
+                breakerItem.addEventListener('click', function() {
+                    const config = {
+                        tripUnit: this.dataset.tripUnit,
+                        auxContact: this.dataset.auxContact,
+                        current: this.dataset.current,
+                        mounting: this.dataset.mounting,
+                        motorDrive: this.dataset.motorDrive,
+                        orientation: this.dataset.orientation,
+                        type: this.dataset.type
+                    };
+                    
+                    currentBreakerItem = this;
+                    currentBreakerType = this.dataset.type;
+                    
+                    showBreakerModal(1, currentBreakerType, config);
+                });
+                
                 column.querySelector('.breaker-container').appendChild(breakerItem);
+                updateVisualization();
+                updateExcelPreview();
             }
             
-            // Распределение автоматов по колоннам
-            function addBreakersWithDistribution(groupId, breakerType, totalBreakers) {
+            function updateBreakerItem(item, config) {
+                item.dataset.tripUnit = config.tripUnit;
+                item.dataset.auxContact = config.auxContact;
+                item.dataset.current = config.current;
+                item.dataset.mounting = config.mounting;
+                item.dataset.motorDrive = config.motorDrive;
+                item.dataset.orientation = config.orientation;
+                item.dataset.type = config.type;
+                
+                // Обновляем отображаемую информацию
+                item.querySelector('span').textContent = `${config.current}А`;
+                item.querySelector('.breaker-info').textContent = config.orientation === 'vertical' ? 'Вертикальный' : 'Горизонтальный';
+                
+                currentBreakerItem = null;
+                updateVisualization();
+                updateExcelPreview();
+            }
+            
+            function addBreakersWithDistribution(groupId, breakerConfig, totalBreakers) {
                 // Собираем все колонны группы
                 let groupColumns = [...document.querySelectorAll(`.column-item[data-outgoing-group="${groupId}"]`)];
                 
-                // Создаем новые колонны при необходимости
-                const moduleSize = (breakerType === '100A-250A') ? 3 : 4;
-                const totalRequiredModules = moduleSize * totalBreakers;
-                const totalAvailableModules = groupColumns.length * 32;
+                // Расчет требуемых модулей
+                const requiredModules = calculateRequiredModules(breakerConfig, totalBreakers);
                 
                 // Расчет необходимых колонн
-                const neededColumns = Math.ceil(totalRequiredModules / 32);
+                const neededColumns = Math.ceil(requiredModules / 32);
                 const columnsToAdd = neededColumns - groupColumns.length;
                 
                 // Добавляем новые колонны
@@ -1349,48 +1639,48 @@
                 }
                 
                 // Распределение автоматов
-                const breakersPerColumn = Math.ceil(totalBreakers / groupColumns.length);
                 let remainingBreakers = totalBreakers;
                 
                 for (const column of groupColumns) {
                     if (remainingBreakers <= 0) break;
                     
                     // Проверяем свободное место в колонне
-                    let usedModules = 0;
-                    column.querySelectorAll('.breaker-item').forEach(item => {
-                        const type = item.dataset.type;
-                        usedModules += (type === '100A-250A') ? 3 : 4;
-                    });
-                    
-                    const freeSpace = 32 - usedModules;
-                    const maxCanAdd = Math.floor(freeSpace / moduleSize);
+                    let usedModules = calculateUsedModules(column);
+                    const freeModules = 32 - usedModules;
                     
                     // Сколько автоматов можно добавить в эту колонну
-                    const toAdd = Math.min(breakersPerColumn, remainingBreakers, maxCanAdd);
+                    let toAdd = 0;
+                    
+                    // Для вертикальных автоматов
+                    if (breakerConfig.orientation === 'vertical') {
+                        // Максимум 4 автомата на сборку
+                        const maxAssemblies = Math.floor(freeModules / 8);
+                        const maxBreakers = maxAssemblies * 4;
+                        toAdd = Math.min(remainingBreakers, maxBreakers);
+                    } else {
+                        // Для горизонтальных автоматов
+                        const moduleSize = (breakerConfig.type === '100A-250A') ? 3 : 4;
+                        const maxBreakers = Math.floor(freeModules / moduleSize);
+                        toAdd = Math.min(remainingBreakers, maxBreakers);
+                    }
                     
                     if (toAdd > 0) {
                         for (let i = 0; i < toAdd; i++) {
-                            // Показываем модальное окно для конфигурации каждого автомата
-                            currentBreakerType = breakerType;
-                            currentBreakerColumn = column;
-                            showBreakerModal(1);
+                            addBreakerToColumn(column, breakerConfig);
                         }
                         remainingBreakers -= toAdd;
                     }
                 }
                 
-                // Если остались нераспределенные автоматы (из-за ограничений модулей)
+                // Если остались нераспределенные автоматы
                 if (remainingBreakers > 0) {
                     // Добавляем еще одну колонну
                     const newColumn = addOutgoingColumn(groupId);
                     columnsContainer.appendChild(newColumn);
-                    groupColumns = [...document.querySelectorAll(`.column-item[data-outgoing-group="${groupId}"]`)];
                     
                     // Добавляем оставшиеся автоматы в новую колонну
                     for (let i = 0; i < remainingBreakers; i++) {
-                        currentBreakerType = breakerType;
-                        currentBreakerColumn = newColumn.querySelector('.column-item');
-                        showBreakerModal(1);
+                        addBreakerToColumn(newColumn.querySelector('.column-item'), breakerConfig);
                     }
                 }
                 
@@ -1398,7 +1688,6 @@
                 updateExcelPreview();
             }
             
-            // Добавление отходящей колонны
             function addOutgoingColumn(groupId) {
                 const columnClone = document.importNode(columnTemplate.content, true);
                 const columnNumber = columnCounter++;
@@ -1417,30 +1706,12 @@
                 const deleteBtn = columnItem.querySelector('.delete-column-btn');
                 const addBreakerBtn = columnItem.querySelector('.add-breaker-btn');
                 
-                deleteBtn.addEventListener('click', function() {
-                    columnItem.remove();
-                    renumberColumns();
-                    updateVisualization();
-                    updateExcelPreview();
-                });
-                
-                addBreakerBtn.addEventListener('click', function() {
-                    const breakerType = columnItem.querySelector('.breaker-type').value;
-                    const breakerCount = parseInt(columnItem.querySelector('.breaker-count').value);
-                    const groupId = columnItem.dataset.outgoingGroup;
-                    
-                    // Сохраняем данные для конфигурации
-                    currentBreakerType = breakerType;
-                    currentBreakerColumn = columnItem;
-                    
-                    // Открываем модальное окно конфигурации автомата
-                    showBreakerModal(breakerCount);
-                });
+                deleteBtn.addEventListener('click', deleteColumn);
+                addBreakerBtn.addEventListener('click', handleAddBreaker);
                 
                 return columnClone;
             }
             
-            // Перенумерация колонн после удаления
             function renumberColumns() {
                 const columnItems = document.querySelectorAll('#columns-container .column-item');
                 columnItems.forEach((item, index) => {
@@ -1451,7 +1722,6 @@
                 });
             }
             
-            // Обновление визуализации
             function updateVisualization() {
                 cabinetVisualization.innerHTML = '';
                 const columns = document.querySelectorAll('.column-item');
@@ -1501,7 +1771,7 @@
                         // Визуализация
                         // Левый блок расширения
                         if (expansionLeft !== 'none') {
-                            const widthPx = parseInt(expansionLeft) / 700 * 200; // Пропорционально
+                            const widthPx = parseInt(expansionLeft) / 700 * 200;
                             const expansionColumn = document.createElement('div');
                             expansionColumn.className = 'cabinet-column';
                             expansionColumn.style.width = widthPx + 'px';
@@ -1544,7 +1814,7 @@
                         
                         // Правый блок расширения
                         if (expansionRight !== 'none') {
-                            const widthPx = parseInt(expansionRight) / 700 * 200; // Пропорционально
+                            const widthPx = parseInt(expansionRight) / 700 * 200;
                             const expansionColumn = document.createElement('div');
                             expansionColumn.className = 'cabinet-column';
                             expansionColumn.style.width = widthPx + 'px';
@@ -1593,10 +1863,8 @@
                         const breakerItems = column.querySelectorAll('.breaker-item');
                         breakerCount += breakerItems.length;
                         
-                        breakerItems.forEach(item => {
-                            const type = item.dataset.type;
-                            totalModules += (type === '100A-250A') ? 3 : 4;
-                        });
+                        // Расчет модулей
+                        totalModules += calculateUsedModules(column);
                     }
                 });
                 
@@ -1608,7 +1876,6 @@
                 document.getElementById('used-modules').textContent = `${totalModules}/32`;
             }
             
-            // Создание элемента колонны
             function createColumnElement(widthPx, type) {
                 const columnEl = document.createElement('div');
                 columnEl.className = 'cabinet-column';
@@ -1636,20 +1903,12 @@
                 return columnEl;
             }
             
-            // Создание секции с автоматами для отходящей колонны
             function createBreakerSection(column) {
                 const section = document.createElement('div');
                 section.className = 'section';
                 
-                const breakerLayout = column.querySelector('.breaker-layout').value;
                 const breakerItems = column.querySelectorAll('.breaker-item');
-                let moduleCount = 0;
-                
-                // Подсчет модулей
-                breakerItems.forEach(item => {
-                    const type = item.dataset.type;
-                    moduleCount += (type === '100A-250A') ? 3 : 4;
-                });
+                let moduleCount = calculateUsedModules(column);
                 
                 // Индикатор модулей
                 const moduleIndicator = document.createElement('div');
@@ -1657,139 +1916,92 @@
                 moduleIndicator.textContent = `Модули: ${moduleCount}/32`;
                 section.appendChild(moduleIndicator);
                 
-                if (breakerLayout === 'horizontal') {
-                    breakerItems.forEach(item => {
-                        const type = item.dataset.type;
-                        const height = (type === '100A-250A') ? '37.5px' : '50px'; // 3 или 4 модуля
-                        const current = item.dataset.current;
-                        const tripUnit = item.dataset.tripUnit;
-                        
-                        const breakerEl = document.createElement('div');
-                        breakerEl.className = 'breaker breaker-horizontal';
-                        breakerEl.style.height = height;
-                        breakerEl.textContent = `${current}А (${tripUnit})`;
-                        section.appendChild(breakerEl);
-                    });
-                } 
-                else if (breakerLayout === 'vertical') {
-                    const rows = [];
-                    let currentRow = [];
-                    
-                    // Разбиваем на ряды по 4 автомата
-                    breakerItems.forEach((item, index) => {
-                        currentRow.push(item);
-                        if (currentRow.length === 4 || index === breakerItems.length - 1) {
-                            rows.push([...currentRow]);
-                            currentRow = [];
+                // Группируем автоматы по ориентации и сборкам
+                const horizontalBreakers = [];
+                const verticalAssemblies = {};
+                
+                breakerItems.forEach(item => {
+                    if (item.dataset.orientation === 'vertical') {
+                        const assemblyId = item.dataset.assemblyId;
+                        if (!verticalAssemblies[assemblyId]) {
+                            verticalAssemblies[assemblyId] = [];
                         }
-                    });
+                        verticalAssemblies[assemblyId].push(item);
+                    } else {
+                        horizontalBreakers.push(item);
+                    }
+                });
+                
+                // Обрабатываем горизонтальные автоматы
+                horizontalBreakers.forEach(item => {
+                    const type = item.dataset.type;
+                    const height = (type === '100A-250A') ? '37.5px' : '50px';
+                    const current = item.dataset.current;
                     
-                    // Создаем ряды
-                    rows.forEach(row => {
-                        const rowContainer = document.createElement('div');
-                        rowContainer.className = 'breaker-vertical-row';
-                        rowContainer.style.display = 'flex';
-                        rowContainer.style.gap = '5px';
-                        rowContainer.style.marginBottom = '5px';
-                        
-                        // Находим максимальную высоту в ряду
-                        let maxHeight = 0;
-                        row.forEach(item => {
-                            const type = item.dataset.type;
-                            const height = (type === '100A-250A') ? 3 : 4;
-                            if (height > maxHeight) maxHeight = height;
-                        });
-                        
-                        row.forEach(item => {
-                            const type = item.dataset.type;
-                            const current = item.dataset.current;
-                            const tripUnit = item.dataset.tripUnit;
-                            const height = (type === '100A-250A') ? 3 : 4;
-                            const heightPx = maxHeight * 12.5; // 12.5px за модуль
-                            
-                            const breakerEl = document.createElement('div');
-                            breakerEl.className = 'breaker-vertical-item';
-                            breakerEl.style.height = `${heightPx}px`;
-                            breakerEl.textContent = `${current}А (${tripUnit})`;
-                            rowContainer.appendChild(breakerEl);
-                        });
-                        
-                        section.appendChild(rowContainer);
-                    });
-                }
-                else { // Комбинированное
-                    // Первые два автомата горизонтально
-                    for (let i = 0; i < Math.min(2, breakerItems.length); i++) {
-                        const item = breakerItems[i];
-                        const type = item.dataset.type;
+                    const breakerEl = document.createElement('div');
+                    breakerEl.className = 'breaker breaker-horizontal';
+                    breakerEl.style.height = height;
+                    breakerEl.textContent = `${current}А`;
+                    section.appendChild(breakerEl);
+                });
+                
+                // Обрабатываем вертикальные сборки
+                Object.values(verticalAssemblies).forEach(assembly => {
+                    const assemblyEl = document.createElement('div');
+                    assemblyEl.className = 'vertical-assembly';
+                    
+                    const assemblyTitle = document.createElement('div');
+                    assemblyTitle.className = 'vertical-assembly-title';
+                    assemblyTitle.textContent = 'Вертикальная сборка';
+                    assemblyEl.appendChild(assemblyTitle);
+                    
+                    const assemblyContent = document.createElement('div');
+                    assemblyContent.className = 'vertical-assembly-content';
+                    
+                    assembly.forEach(item => {
                         const current = item.dataset.current;
-                        const tripUnit = item.dataset.tripUnit;
-                        const height = (type === '100A-250A') ? '37.5px' : '50px';
                         
                         const breakerEl = document.createElement('div');
-                        breakerEl.className = 'breaker breaker-horizontal';
-                        breakerEl.style.height = height;
-                        breakerEl.textContent = `${current}А (${tripUnit})`;
-                        section.appendChild(breakerEl);
-                    }
+                        breakerEl.className = 'vertical-breaker';
+                        breakerEl.textContent = `${current}А`;
+                        assemblyContent.appendChild(breakerEl);
+                    });
                     
-                    // Оставшиеся автоматы вертикально
-                    if (breakerItems.length > 2) {
-                        const verticalItems = Array.from(breakerItems).slice(2);
-                        const rows = [];
-                        let currentRow = [];
-                        
-                        verticalItems.forEach((item, index) => {
-                            currentRow.push(item);
-                            if (currentRow.length === 4 || index === verticalItems.length - 1) {
-                                rows.push([...currentRow]);
-                                currentRow = [];
-                            }
-                        });
-                        
-                        rows.forEach(row => {
-                            const rowContainer = document.createElement('div');
-                            rowContainer.className = 'breaker-vertical-row';
-                            rowContainer.style.display = 'flex';
-                            rowContainer.style.gap = '5px';
-                            rowContainer.style.marginBottom = '5px';
-                            
-                            let maxHeight = 0;
-                            row.forEach(item => {
-                                const type = item.dataset.type;
-                                const height = (type === '100A-250A') ? 3 : 4;
-                                if (height > maxHeight) maxHeight = height;
-                            });
-                            
-                            row.forEach(item => {
-                                const type = item.dataset.type;
-                                const current = item.dataset.current;
-                                const tripUnit = item.dataset.tripUnit;
-                                const height = (type === '100A-250A') ? 3 : 4;
-                                const heightPx = maxHeight * 12.5;
-                                
-                                const breakerEl = document.createElement('div');
-                                breakerEl.className = 'breaker-vertical-item';
-                                breakerEl.style.height = `${heightPx}px`;
-                                breakerEl.textContent = `${current}А (${tripUnit})`;
-                                rowContainer.appendChild(breakerEl);
-                            });
-                            
-                            section.appendChild(rowContainer);
-                        });
-                    }
-                }
+                    assemblyEl.appendChild(assemblyContent);
+                    
+                    // Добавляем свободное пространство под сборкой
+                    const spaceEl = document.createElement('div');
+                    spaceEl.className = 'vertical-assembly-space';
+                    assemblyEl.appendChild(spaceEl);
+                    
+                    // Информация о модулях сборки
+                    const moduleInfo = document.createElement('div');
+                    moduleInfo.className = 'assembly-module-info';
+                    moduleInfo.textContent = '8 модулей';
+                    assemblyEl.appendChild(moduleInfo);
+                    
+                    section.appendChild(assemblyEl);
+                });
                 
                 return section;
             }
             
-            // Обновление предпросмотра Excel
             function updateExcelPreview() {
                 excelPreviewTable.innerHTML = '';
                 
                 const columns = document.querySelectorAll('.column-item');
-                columns.forEach(column => {
+                let rowCounter = 1;
+                
+                columns.forEach((column, columnIndex) => {
                     const columnType = column.querySelector('.column-type').value;
+                    
+                    // Добавляем заголовок колонны
+                    const columnRow = document.createElement('tr');
+                    columnRow.style.backgroundColor = 'rgba(33, 150, 243, 0.2)';
+                    columnRow.innerHTML = `
+                        <td colspan="5"><strong>Колонна ${columnIndex + 1}: ${getColumnTypeName(columnType)}</strong></td>
+                    `;
+                    excelPreviewTable.appendChild(columnRow);
                     
                     if (columnType === 'incomer' || columnType === 'sectional') {
                         const isIncomer = columnType === 'incomer';
@@ -1810,27 +2022,25 @@
                         const expansionRight = column.querySelector('.expansion-right').value;
                         const hasAVR = !isIncomer && column.querySelector('.avr-checkbox')?.checked;
                         
-                        // Добавляем строку для колонны
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${isIncomer ? 'Вводная' : 'Секционная'}</td>
-                            <td>-</td>
-                            <td>Основная колонна</td>
+                        // Добавляем строку для основного оборудования
+                        const mainRow = document.createElement('tr');
+                        mainRow.innerHTML = `
+                            <td>${rowCounter++}</td>
+                            <td>COL-${isIncomer ? 'IN' : 'SEC'}-${breakerSizeValue}</td>
+                            <td>${isIncomer ? 'Вводная колонна' : 'Секционная колонна'} ${breakerSizeValue}А</td>
                             <td>1</td>
-                            <td>${breakerSizeValue}А</td>
                             <td>${expansionLeft !== 'none' ? 'Блок слева: ' + expansionLeft + 'мм' : ''} ${expansionRight !== 'none' ? 'Блок справа: ' + expansionRight + 'мм' : ''}</td>
                         `;
-                        excelPreviewTable.appendChild(row);
+                        excelPreviewTable.appendChild(mainRow);
                         
                         // Добавляем строки для автоматов
                         for (let i = 0; i < incomerCount; i++) {
                             const breakerRow = document.createElement('tr');
                             breakerRow.innerHTML = `
-                                <td>Автомат</td>
-                                <td>SPC${breakerSizeValue}ACB</td>
-                                <td>${isIncomer ? 'Вводной' : 'Секционный'} автомат</td>
+                                <td>${rowCounter++}</td>
+                                <td>ACB-${breakerSizeValue}</td>
+                                <td>${isIncomer ? 'Вводной' : 'Секционный'} автомат ${breakerSizeValue}А</td>
                                 <td>1</td>
-                                <td>${breakerSizeValue}А</td>
                                 <td></td>
                             `;
                             excelPreviewTable.appendChild(breakerRow);
@@ -1840,11 +2050,10 @@
                         if (hasAVR) {
                             const avrRow = document.createElement('tr');
                             avrRow.innerHTML = `
-                                <td>АВР</td>
-                                <td>SPC-AVR-PLC</td>
+                                <td>${rowCounter++}</td>
+                                <td>AVR-PLC</td>
                                 <td>Автоматический ввод резерва</td>
                                 <td>1</td>
-                                <td>-</td>
                                 <td>На SystemePLC</td>
                             `;
                             excelPreviewTable.appendChild(avrRow);
@@ -1853,14 +2062,26 @@
                     else if (columnType === 'outgoing') {
                         const breakerItems = column.querySelectorAll('.breaker-item');
                         
+                        // Добавляем строку для колонны
+                        const mainRow = document.createElement('tr');
+                        mainRow.innerHTML = `
+                            <td>${rowCounter++}</td>
+                            <td>COL-OUT</td>
+                            <td>Отходящая колонна</td>
+                            <td>1</td>
+                            <td></td>
+                        `;
+                        excelPreviewTable.appendChild(mainRow);
+                        
                         // Добавляем строки для каждого автомата и его аксессуаров
-                        breakerItems.forEach(item => {
+                        breakerItems.forEach((item, idx) => {
                             const type = item.dataset.type;
                             const tripUnit = item.dataset.tripUnit;
                             const auxContact = item.dataset.auxContact;
                             const current = item.dataset.current;
                             const mounting = item.dataset.mounting;
                             const motorDrive = item.dataset.motorDrive === 'true';
+                            const orientation = item.dataset.orientation;
                             
                             // Определение артикула основного автомата
                             let breakerRef = '';
@@ -1868,24 +2089,23 @@
                             
                             if (tripUnit === 'TM-D') {
                                 breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}L3DF`;
-                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} TM-D`;
+                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} TM-D ${current}А`;
                             } else if (tripUnit === 'SystemeLogic2') {
                                 breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}22L3DF`;
-                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 2`;
+                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 2 ${current}А`;
                             } else if (tripUnit === 'SystemeLogic5') {
                                 breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}52E3DFC`;
-                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 5`;
+                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 5 ${current}А`;
                             }
                             
                             // Добавляем строку для основного автомата
                             const breakerRow = document.createElement('tr');
                             breakerRow.innerHTML = `
-                                <td>Автомат</td>
+                                <td>${rowCounter++}</td>
                                 <td>${breakerRef}</td>
                                 <td>${breakerDesc}</td>
                                 <td>1</td>
-                                <td>${current}А</td>
-                                <td></td>
+                                <td>${orientation === 'vertical' ? 'Вертикальная установка' : 'Горизонтальная установка'}</td>
                             `;
                             excelPreviewTable.appendChild(breakerRow);
                             
@@ -1893,11 +2113,10 @@
                             if (auxContact !== '0') {
                                 const auxRow = document.createElement('tr');
                                 auxRow.innerHTML = `
-                                    <td>Аксессуар</td>
+                                    <td>${rowCounter++}</td>
                                     <td>SPC-OFSD-01-06</td>
                                     <td>Дополнительный контакт</td>
                                     <td>${auxContact}</td>
-                                    <td>-</td>
                                     <td></td>
                                 `;
                                 excelPreviewTable.appendChild(auxRow);
@@ -1906,19 +2125,22 @@
                             // Способ установки
                             if (mounting !== 'fixed') {
                                 let mountingRef = '';
+                                let mountingDesc = '';
+                                
                                 if (mounting === 'plug-in') {
                                     mountingRef = parseInt(current) <= 250 ? 'SPC-PIK3-01-02' : 'SPC-PIK3-04-06';
+                                    mountingDesc = 'Комплект для втычной установки';
                                 } else if (mounting === 'withdrawable') {
                                     mountingRef = parseInt(current) <= 250 ? 'SPC-DOK3-01-02' : 'SPC-DOK3-04-06';
+                                    mountingDesc = 'Комплект для выкатной установки';
                                 }
                                 
                                 const mountingRow = document.createElement('tr');
                                 mountingRow.innerHTML = `
-                                    <td>Аксессуар</td>
+                                    <td>${rowCounter++}</td>
                                     <td>${mountingRef}</td>
-                                    <td>Комплект для ${mounting === 'plug-in' ? 'втычной' : 'выкатной'} установки</td>
+                                    <td>${mountingDesc}</td>
                                     <td>1</td>
-                                    <td>-</td>
                                     <td></td>
                                 `;
                                 excelPreviewTable.appendChild(mountingRow);
@@ -1929,11 +2151,10 @@
                                 const motorRef = parseInt(current) <= 250 ? 'SPC-MA2-01-02' : 'SPC-MA2-04-06';
                                 const motorRow = document.createElement('tr');
                                 motorRow.innerHTML = `
-                                    <td>Аксессуар</td>
+                                    <td>${rowCounter++}</td>
                                     <td>${motorRef}</td>
                                     <td>Мотор привод</td>
                                     <td>1</td>
-                                    <td>-</td>
                                     <td></td>
                                 `;
                                 excelPreviewTable.appendChild(motorRow);
@@ -1943,19 +2164,38 @@
                 });
             }
             
-            // Экспорт в Excel
-            exportExcelBtn.addEventListener('click', function() {
+            function getColumnTypeName(type) {
+                switch(type) {
+                    case 'incomer': return 'Вводная';
+                    case 'sectional': return 'Секционная';
+                    case 'outgoing': return 'Отходящая';
+                    default: return '';
+                }
+            }
+            
+            function exportToExcel() {
                 // Создаем книгу
                 const wb = XLSX.utils.book_new();
                 
                 // Собираем данные
                 const data = [
-                    ['Тип', 'Артикул', 'Описание', 'Кол-во', 'Номинал', 'Примечание']
+                    ['Позиция', 'Артикул', 'Наименование', 'Кол-во', 'Примечание']
                 ];
                 
                 const columns = document.querySelectorAll('.column-item');
-                columns.forEach(column => {
+                let rowCounter = 1;
+                
+                columns.forEach((column, columnIndex) => {
                     const columnType = column.querySelector('.column-type').value;
+                    
+                    // Добавляем заголовок колонны
+                    data.push([
+                        rowCounter++,
+                        '',
+        `Колонна ${columnIndex + 1}: ${getColumnTypeName(columnType)}`,
+                        '',
+                        ''
+                    ]);
                     
                     if (columnType === 'incomer' || columnType === 'sectional') {
                         const isIncomer = columnType === 'incomer';
@@ -1976,13 +2216,12 @@
                         const expansionRight = column.querySelector('.expansion-right').value;
                         const hasAVR = !isIncomer && column.querySelector('.avr-checkbox')?.checked;
                         
-                        // Добавляем строку для колонны
+                        // Добавляем строку для основного оборудования
                         data.push([
-                            isIncomer ? 'Вводная' : 'Секционная',
-                            '-',
-                            'Основная колонна',
+                            rowCounter++,
+                            `COL-${isIncomer ? 'IN' : 'SEC'}-${breakerSizeValue}`,
+                            `${isIncomer ? 'Вводная колонна' : 'Секционная колонна'} ${breakerSizeValue}А`,
                             '1',
-                            breakerSizeValue + 'А',
                             (expansionLeft !== 'none' ? 'Блок слева: ' + expansionLeft + 'мм' : '') + 
                             (expansionRight !== 'none' ? ' Блок справа: ' + expansionRight + 'мм' : '')
                         ]);
@@ -1990,11 +2229,10 @@
                         // Добавляем строки для автоматов
                         for (let i = 0; i < incomerCount; i++) {
                             data.push([
-                                'Автомат',
-                                `SPC${breakerSizeValue}ACB`,
-                                isIncomer ? 'Вводной автомат' : 'Секционный автомат',
+                                rowCounter++,
+                                `ACB-${breakerSizeValue}`,
+                                `${isIncomer ? 'Вводной' : 'Секционный'} автомат ${breakerSizeValue}А`,
                                 '1',
-                                breakerSizeValue + 'А',
                                 ''
                             ]);
                         }
@@ -2002,17 +2240,25 @@
                         // Добавляем строку для АВР
                         if (hasAVR) {
                             data.push([
-                                'АВР',
-                                'SPC-AVR-PLC',
+                                rowCounter++,
+                                'AVR-PLC',
                                 'Автоматический ввод резерва',
                                 '1',
-                                '-',
                                 'На SystemePLC'
                             ]);
                         }
                     } 
                     else if (columnType === 'outgoing') {
                         const breakerItems = column.querySelectorAll('.breaker-item');
+                        
+                        // Добавляем строку для колонны
+                        data.push([
+                            rowCounter++,
+                            'COL-OUT',
+                            'Отходящая колонна',
+                            '1',
+                            ''
+                        ]);
                         
                         // Добавляем строки для каждого автомата и его аксессуаров
                         breakerItems.forEach(item => {
@@ -2022,6 +2268,7 @@
                             const current = item.dataset.current;
                             const mounting = item.dataset.mounting;
                             const motorDrive = item.dataset.motorDrive === 'true';
+                            const orientation = item.dataset.orientation;
                             
                             // Определение артикула основного автомата
                             let breakerRef = '';
@@ -2029,33 +2276,31 @@
                             
                             if (tripUnit === 'TM-D') {
                                 breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}L3DF`;
-                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} TM-D`;
+                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} TM-D ${current}А`;
                             } else if (tripUnit === 'SystemeLogic2') {
                                 breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}22L3DF`;
-                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 2`;
+                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 2 ${current}А`;
                             } else if (tripUnit === 'SystemeLogic5') {
                                 breakerRef = `SPC${getSizeByCurrent(current)}F${current.toString().padStart(3, '0')}52E3DFC`;
-                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 5`;
+                                breakerDesc = `Автомат SPC${getSizeByCurrent(current)} SystemeLogic 5 ${current}А`;
                             }
                             
                             // Добавляем строку для основного автомата
                             data.push([
-                                'Автомат',
+                                rowCounter++,
                                 breakerRef,
                                 breakerDesc,
                                 '1',
-                                current + 'А',
-                                ''
+                                orientation === 'vertical' ? 'Вертикальная установка' : 'Горизонтальная установка'
                             ]);
                             
                             // Дополнительный контакт
                             if (auxContact !== '0') {
                                 data.push([
-                                    'Аксессуар',
+                                    rowCounter++,
                                     'SPC-OFSD-01-06',
                                     'Дополнительный контакт',
                                     auxContact,
-                                    '-',
                                     ''
                                 ]);
                             }
@@ -2074,11 +2319,10 @@
                                 }
                                 
                                 data.push([
-                                    'Аксессуар',
+                                    rowCounter++,
                                     mountingRef,
                                     mountingDesc,
                                     '1',
-                                    '-',
                                     ''
                                 ]);
                             }
@@ -2087,11 +2331,10 @@
                             if (motorDrive) {
                                 const motorRef = parseInt(current) <= 250 ? 'SPC-MA2-01-02' : 'SPC-MA2-04-06';
                                 data.push([
-                                    'Аксессуар',
+                                    rowCounter++,
                                     motorRef,
                                     'Мотор привод',
                                     '1',
-                                    '-',
                                     ''
                                 ]);
                             }
@@ -2107,7 +2350,7 @@
                 
                 // Сохраняем файл
                 XLSX.writeFile(wb, "ГРЩ_SystemeBlock.xlsx");
-            });
+            }
             
             // Инициализация предпросмотра
             updateExcelPreview();
